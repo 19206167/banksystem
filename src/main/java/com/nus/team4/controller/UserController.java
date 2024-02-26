@@ -2,6 +2,7 @@ package com.nus.team4.controller;
 
 import com.nus.team4.advice.Result;
 import com.nus.team4.service.UserService;
+import com.nus.team4.dto.AccountOpenForm;
 import com.nus.team4.vo.JwtToken;
 import com.nus.team4.vo.RegistrationForm;
 import com.nus.team4.vo.UsernameAndPassword;
@@ -24,6 +25,12 @@ public class UserController {
     public Result<JwtToken> login(@RequestBody UsernameAndPassword usernameAndPassword) throws Exception {
         log.info("调用方法： [{}]", "login");
         return userService.login(usernameAndPassword);
+    }
+
+    @PostMapping("/openAccount")
+    public Result openAccount(@RequestBody AccountOpenForm accountOpenForm) throws Exception {
+        log.info("调用方法： [{}]", "openAccount");
+        return userService.openAccount(accountOpenForm);
     }
 
     @PostMapping("/register")

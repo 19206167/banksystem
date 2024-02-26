@@ -1,20 +1,21 @@
 package com.nus.team4.service.impl;
 
 import com.nus.team4.advice.Result;
+import com.nus.team4.dto.AccountOpenForm;
 import com.nus.team4.mapper.CardMapper;
 import com.nus.team4.pojo.Card;
 import com.nus.team4.pojo.User;
 import com.nus.team4.service.UserService;
+import com.nus.team4.util.AccountUtil;
 import com.nus.team4.util.JwtUtil;
-import com.nus.team4.vo.JwtToken;
-import com.nus.team4.vo.LoginUserInfo;
-import com.nus.team4.vo.RegistrationForm;
-import com.nus.team4.vo.UsernameAndPassword;
+import com.nus.team4.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.nus.team4.mapper.UserMapper;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Objects;
 
 
@@ -94,6 +95,29 @@ public class UserServiceImpl implements UserService {
 
 
         return null;
+    }
+
+    @Override
+    public Result<String> openAccount(AccountOpenForm accountOpenForm){
+        String iban = AccountUtil.generateAccountNumber();
+
+        Card account = Card.builder()
+                .iban(iban)
+                .email(accountOpenForm.getEmail())
+                .name(accountOpenForm.getName())
+                .phone(accountOpenForm.getPhone())
+                .SecurityCode(accountOpenForm.getSecurityCode())
+                .currency(accountOpenForm.getCurrency())
+                .accountType(accountOpenForm.getAccountType())
+                .status(accountOpenForm.getStatus())
+                .balance(new BigDecimal("0.00"))
+                .createTime(new Date())
+                .updateTime(new Date())
+                .build();
+
+        cardMapper.insertCard(account);
+
+        return Result.success(iban);
     }
 }
 

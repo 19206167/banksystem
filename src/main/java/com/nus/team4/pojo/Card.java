@@ -1,6 +1,7 @@
 package com.nus.team4.pojo;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Card {
@@ -15,13 +17,19 @@ public class Card {
     private Long id;
 
     /** 卡号 **/
-    private String cardNumber;
+    private String iban;
+
+    private String currency;
+
+    private String status;
+
+    private String accountType;
 
     /** 三位安全码 **/
     private String SecurityCode;
 
     /** 账户余额 **/
-    private BigDecimal amount;
+    private BigDecimal balance;
 
     /** email **/
     private String email;
