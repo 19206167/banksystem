@@ -12,10 +12,6 @@ import java.math.BigDecimal;
 @Setter
 public class AccountOpenForm {
 
-    @NotBlank(message = "IBAN is required")
-    @Size(min = 15, max = 34, message = "IBAN must be between 15 and 34 characters long")
-    private String iban;
-
     @NotBlank(message = "Currency is required")
     @Pattern(regexp = "^[A-Z]{3}$", message = "Currency must be a valid 3-letter ISO code")
     private String currency;
