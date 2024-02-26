@@ -3,22 +3,17 @@ package com.nus.team4.util;
 import com.alibaba.fastjson.JSON;
 import com.nus.team4.constant.AuthorityConstant;
 import com.nus.team4.vo.LoginUserInfo;
-import com.sun.xml.internal.bind.v2.TODO;
 import io.jsonwebtoken.*;
-import org.apache.tomcat.jni.Local;
 import sun.misc.BASE64Decoder;
 
-import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.time.*;
-import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 
 /**
  * JWT工具类，生成jwt, 解析token

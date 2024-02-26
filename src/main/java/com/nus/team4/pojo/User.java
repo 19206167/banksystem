@@ -14,20 +14,14 @@ public class User implements Serializable {
     /** 自增id */
     private Long id;
 
+    /** 卡片id **/
+    private Long cardId;
+
     /** 用户名 */
     private String username;
 
     /** MD5 加密密码 */
     private String password;
-
-    /** email **/
-    private String email;
-
-    /** 用户姓名 **/
-    private String name;
-
-    /** 电话号码 **/
-    private String phone;
 
     /** 创建时间 */
     private Date createTime;

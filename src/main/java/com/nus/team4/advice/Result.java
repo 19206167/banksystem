@@ -13,16 +13,18 @@ public class Result<T> implements Serializable {
 //    数据
     private T data;
 
-    public static <T> Result<T> success(){
+    public static <T> Result<T> success(String msg){
         Result<T> result = new Result<>();
         result.code = 200;
+        result.msg = msg;
         return result;
     }
 
-    public static <T> Result<T> success(T data) {
+    public static <T> Result<T> success(T data, String msg) {
         Result<T> result = new Result<>();
         result.data = data;
         result.code = 200;
+        result.msg = msg;
         return result;
     }
 
