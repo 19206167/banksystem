@@ -2,6 +2,7 @@ package com.nus.team4.service.impl;
 
 import com.nus.team4.advice.Result;
 import com.nus.team4.dto.AccountOpenForm;
+import com.nus.team4.dto.CardInfo;
 import com.nus.team4.mapper.CardMapper;
 import com.nus.team4.pojo.Card;
 import com.nus.team4.pojo.User;
@@ -98,15 +99,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result<String> openAccount(AccountOpenForm accountOpenForm){
+    public Result openAccount(AccountOpenForm accountOpenForm){
         String iban = AccountUtil.generateAccountNumber();
-
+        String cvc = AccountUtil.generateCVC();
         Card account = Card.builder()
                 .iban(iban)
                 .email(accountOpenForm.getEmail())
                 .name(accountOpenForm.getName())
                 .phone(accountOpenForm.getPhone())
-                .SecurityCode(accountOpenForm.getSecurityCode())
+                .SecurityCode(cvc)
                 .currency(accountOpenForm.getCurrency())
                 .accountType(accountOpenForm.getAccountType())
                 .status(accountOpenForm.getStatus())
@@ -116,8 +117,8 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         cardMapper.insertCard(account);
-
-        return Result.success(iban);
+        CardInfo cardInfo = new CardInfo(iban, cvc);
+        return Result.success(cardInfo, "account created");
     }
 }
 

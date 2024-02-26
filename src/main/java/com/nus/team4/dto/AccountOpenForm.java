@@ -22,10 +22,6 @@ public class AccountOpenForm {
     @NotBlank(message = "Status is required")
     private String status;
 
-    @NotBlank(message = "Security Code is required")
-    @Size(min = 3, max = 3, message = "Security Code must be 3 digits")
-    private String securityCode;
-
     private BigDecimal balance = BigDecimal.ZERO;
 
     @NotBlank(message = "Email is required")

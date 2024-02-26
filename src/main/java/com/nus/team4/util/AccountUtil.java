@@ -18,4 +18,19 @@ public class AccountUtil {
         return iban;
 
     }
+
+    public static String generateCVC() {
+        String[] num = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 3; i++) {
+            int n = random.nextInt(num.length);
+            sb.append(num[n]);
+        }
+
+        String cvc = sb.toString();
+
+        return cvc;
+    }
 }
