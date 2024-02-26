@@ -1,7 +1,10 @@
 package com.nus.team4.service;
 
 
+import com.nus.team4.advice.Result;
 import com.nus.team4.pojo.User;
+import com.nus.team4.vo.JwtToken;
+import com.nus.team4.vo.RegistrationForm;
 import com.nus.team4.vo.UsernameAndPassword;
 
 public interface UserService {
@@ -9,7 +12,7 @@ public interface UserService {
 
     User getUserByUsername(String username);
 
-    String login(UsernameAndPassword usernameAndPassword) throws Exception;
+    Result<JwtToken> login(UsernameAndPassword usernameAndPassword) throws Exception;
 
-    String register(UsernameAndPassword usernameAndPassword);
+    Result register(RegistrationForm registrationForm);
 }

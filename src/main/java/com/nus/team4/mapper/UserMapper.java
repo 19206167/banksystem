@@ -13,4 +13,7 @@ public interface UserMapper {
 
     @Select("SELECT * FROM t_user where username = #{username} and password = #{password}")
     User findByUsernameAndPassword(String username, String password);
+
+    @Select("SELECT * FROM t_user where card_id = #{cardId}")
+    User findByCardId(Long cardId);
 }
