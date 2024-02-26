@@ -14,9 +14,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
@@ -45,8 +43,8 @@ public class JwtUtil {
             ttlMills = AuthorityConstant.DEFAULT_EXPIRE_MINUTE;
         }
 //        JWT有效时间
-        ZonedDateTime zonedDateTime = LocalDate.now().plus(ttlMills, ChronoUnit.MINUTES)
-                .atStartOfDay(ZoneId.systemDefault());
+        LocalDateTime dateTime = LocalDateTime.now().plusMinutes(ttlMills);
+        ZonedDateTime zonedDateTime = dateTime.atZone(ZoneId.systemDefault());
         Date exp = Date.from(zonedDateTime.toInstant());
 
 //        设置jwtbody

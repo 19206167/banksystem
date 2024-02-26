@@ -1,7 +1,7 @@
 package com.nus.team4.service;
 
-import com.nus.team4.model.User;
-import com.nus.team4.service.UserSvc;
+import com.nus.team4.pojo.User;
+import com.nus.team4.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class UserSvcTest {
 
     @Autowired
-    private UserSvc userSvc;
+    private UserServiceImpl userSvc;
 
     @Test
     public void testGetUserById() {

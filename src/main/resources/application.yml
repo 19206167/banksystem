@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/bank
     username: postgres
-    password: root
+    password: 414670
     driver-class-name: org.postgresql.Driver
   redis:
     host: localhost
@@ -12,7 +12,6 @@ spring:
 
 mybatis:
   type-aliases-package: com.kl.bankmaster.model
-
 
 server:
   port: 8080
