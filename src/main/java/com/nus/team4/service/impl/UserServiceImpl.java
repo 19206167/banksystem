@@ -1,13 +1,15 @@
 package com.nus.team4.service.impl;
 
 import com.nus.team4.advice.Result;
+import com.nus.team4.dto.AccountOpenForm;
+import com.nus.team4.dto.CardInfo;
 import com.nus.team4.constant.AuthorityConstant;
 import com.nus.team4.mapper.CardMapper;
 import com.nus.team4.pojo.Card;
 import com.nus.team4.pojo.User;
 import com.nus.team4.service.UserService;
+import com.nus.team4.util.AccountUtil;
 import com.nus.team4.util.JwtUtil;
-import com.nus.team4.util.RedisUtil;
 import com.nus.team4.vo.JwtToken;
 import com.nus.team4.vo.LoginUserInfo;
 import com.nus.team4.vo.RegistrationForm;
@@ -16,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.nus.team4.mapper.UserMapper;
+
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -28,9 +31,6 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     private CardMapper cardMapper;
-
-    @Autowired
-    private RedisUtil redisUtil;
 
     @Autowired
     public UserServiceImpl(UserMapper userMapper, CardMapper cardMapper) {
@@ -118,6 +118,29 @@ public class UserServiceImpl implements UserService {
         redisUtil.set(AuthorityConstant.TOKEN_BLACKLIST_CACHE_PREFIX + token, token, 11L, TimeUnit.MINUTES);
 
         return Result.success("已成功登出");
+    }
+
+    @Override
+    public Result openAccount(AccountOpenForm accountOpenForm){
+        String iban = AccountUtil.generateAccountNumber();
+        String cvc = AccountUtil.generateCVC();
+        Card account = Card.builder()
+                .iban(iban)
+                .email(accountOpenForm.getEmail())
+                .name(accountOpenForm.getName())
+                .phone(accountOpenForm.getPhone())
+                .SecurityCode(cvc)
+                .currency(accountOpenForm.getCurrency())
+                .accountType(accountOpenForm.getAccountType())
+                .status(accountOpenForm.getStatus())
+                .balance(new BigDecimal("0.00"))
+                .createTime(new Date())
+                .updateTime(new Date())
+                .build();
+
+        cardMapper.insertCard(account);
+        CardInfo cardInfo = new CardInfo(iban, cvc);
+        return Result.success(cardInfo, "account created");
     }
 }
 

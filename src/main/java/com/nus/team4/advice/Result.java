@@ -6,7 +6,9 @@ import java.io.Serializable;
  * 后端统一返回结果
  */
 public class Result<T> implements Serializable {
-//    编码，200成功，其它数字为失败
+
+
+    //    编码，200成功，其它数字为失败
     private Integer code;
 //    错误信息
     private String msg;
@@ -33,5 +35,29 @@ public class Result<T> implements Serializable {
         result.msg = msg;
         result.code = code;
         return result;
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
     }
 }
