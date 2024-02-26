@@ -1,14 +1,14 @@
 package com.nus.team4.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-@Configuration
+@Component
 public class RedisUtil {
 
     @Autowired
@@ -86,6 +86,10 @@ public class RedisUtil {
      */
     public Boolean expire(String key, Long timeout, TimeUnit unit) {
         return stringRedisTemplate.expire(key, timeout, unit);
+    }
+
+    public long getExpire(String key) {
+        return stringRedisTemplate.getExpire(key, TimeUnit.SECONDS);
     }
     /**
      * 添加set

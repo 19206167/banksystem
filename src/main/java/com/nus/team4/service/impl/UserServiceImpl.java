@@ -10,6 +10,7 @@ import com.nus.team4.pojo.User;
 import com.nus.team4.service.UserService;
 import com.nus.team4.util.AccountUtil;
 import com.nus.team4.util.JwtUtil;
+import com.nus.team4.util.RedisUtil;
 import com.nus.team4.vo.JwtToken;
 import com.nus.team4.vo.LoginUserInfo;
 import com.nus.team4.vo.RegistrationForm;
@@ -20,6 +21,9 @@ import org.springframework.stereotype.Service;
 import com.nus.team4.mapper.UserMapper;
 
 
+import java.math.BigDecimal;
+
+import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -31,6 +35,9 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     private CardMapper cardMapper;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Autowired
     public UserServiceImpl(UserMapper userMapper, CardMapper cardMapper) {
@@ -52,26 +59,27 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    @Override
-    public Result<JwtToken> login(UsernameAndPassword usernameAndPassword) throws Exception {
-//        通过用户名和密码得到用户
-        User user = userMapper.findByUsernameAndPassword(usernameAndPassword.getUsername(),
-                usernameAndPassword.getPassword());
-//        不能正常登录返回null
-        if (user == null) {
-            log.error("cannot find user: [{}]", usernameAndPassword.getUsername());
-            return Result.error(0, "cannot find user");
-        }
-
-        LoginUserInfo loginUserInfo = new LoginUserInfo(user.getId(), user.getUsername());
-
-        String jwt = JwtUtil.createJWT(loginUserInfo);
-
-//        将jwt存入redis中，鉴权时取出
-        redisUtil.set(AuthorityConstant.JWT_USER_INFO_KEY +usernameAndPassword.getUsername(), jwt);
-
-        return Result.success(new JwtToken(jwt), "登录成功");
-    }
+//    @Override
+//    public Result<JwtToken> login(UsernameAndPassword usernameAndPassword) throws Exception {
+////        通过用户名和密码得到用户
+//        User user = userMapper.findByUsernameAndPassword(usernameAndPassword.getUsername(),
+//                usernameAndPassword.getPassword());
+//
+////        不能正常登录返回null
+//        if (user == null) {
+//            log.error("cannot find user: [{}]", usernameAndPassword.getUsername());
+//            return Result.error(0, "cannot find user");
+//        }
+//
+//        LoginUserInfo loginUserInfo = new LoginUserInfo(user.getId(), user.getUsername());
+//
+//        String jwt = JwtUtil.createJWT(loginUserInfo);
+//
+////        将jwt存入redis中，鉴权时取出
+//        redisUtil.set(AuthorityConstant.JWT_USER_INFO_KEY +usernameAndPassword.getUsername(), jwt);
+//
+//        return Result.success(new JwtToken(jwt), "登录成功");
+//    }
 
 //    注册账户方法
     /*
@@ -111,11 +119,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result<String> logout(String token) throws Exception {
-        LoginUserInfo loginUserInfo = JwtUtil.parseUserInfoFromToken(token);
+        String username = JwtUtil.parseUserInfoFromToken(token);
 //        让redis中的token失效
-        redisUtil.expire(AuthorityConstant.JWT_USER_INFO_KEY + loginUserInfo.getUsername()
-                , 0L, TimeUnit.SECONDS);
-        redisUtil.set(AuthorityConstant.TOKEN_BLACKLIST_CACHE_PREFIX + token, token, 11L, TimeUnit.MINUTES);
+        StringBuilder key = new StringBuilder(AuthorityConstant.JWT_USER_INFO_KEY).append(username);
+        redisUtil.expire(key.toString(), 0L, TimeUnit.SECONDS);
+//        redisUtil.set(AuthorityConstant.TOKEN_BLACKLIST_CACHE_PREFIX + token, token, 11L, TimeUnit.MINUTES);
 
         return Result.success("已成功登出");
     }

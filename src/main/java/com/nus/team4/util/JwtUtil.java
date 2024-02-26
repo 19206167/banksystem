@@ -2,8 +2,8 @@ package com.nus.team4.util;
 
 import com.alibaba.fastjson.JSON;
 import com.nus.team4.constant.AuthorityConstant;
-import com.nus.team4.vo.LoginUserInfo;
 import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 import sun.misc.BASE64Decoder;
 
 import java.security.KeyFactory;
@@ -18,10 +18,11 @@ import java.util.Date;
 /**
  * JWT工具类，生成jwt, 解析token
  */
+@Slf4j
 public class JwtUtil {
 
-    public static String createJWT(LoginUserInfo loginUserInfo) throws Exception {
-        return createJWT(loginUserInfo, 0);
+    public static String createJWT(String username) throws Exception {
+        return createJWT(username, 0);
     }
     /*
      * @description: 使用Hs256算法，密匙使用笃定密钥
@@ -29,7 +30,7 @@ public class JwtUtil {
      * @param: [secretKey, ttlMills, claims]
      * @return: java.lang.String
      **/
-    public static String createJWT(LoginUserInfo loginUserInfo, long ttlMills) throws Exception {
+    public static String createJWT(String username, long ttlMills) throws Exception {
 //        指定签名的时候使用的签名算法
         //TODO: 算法选择需要更改，这里可以作为presentation的点
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.RS256;
@@ -47,7 +48,7 @@ public class JwtUtil {
 
                 // 如果有私有声明，一定要先设置这个自己创建的私有的声明，
                 // 这个是给builder的claim赋值，一旦写在标准的声明赋值之后，就是覆盖了那些标准的声明的
-                .claim(AuthorityConstant.JWT_USER_INFO_KEY, JSON.toJSON(loginUserInfo))
+                .claim(AuthorityConstant.JWT_USER_INFO_KEY, JSON.toJSON(username))
 //                  设置签名使用的算法和签名使用的密钥
                 .signWith(signatureAlgorithm, getPrivateKey())
 //                设置过期时间
@@ -56,9 +57,11 @@ public class JwtUtil {
     }
 
     //    从JWT token中解析LoginUserInfo对象
-    public static LoginUserInfo parseUserInfoFromToken(String token) throws Exception {
+    public static String parseUserInfoFromToken(String token) throws Exception {
+        log.info("parse token");
 //        首先判断是否为空
         if (token == null) {
+            log.error("token is null");
             return null;
         }
 
@@ -66,13 +69,16 @@ public class JwtUtil {
         Claims body = claimsJws.getBody();
 
 //        如果token已经过期了，返回null
+        log.info(String.valueOf(Date.from(body.getExpiration().toInstant())));
         if (body.getExpiration().before(Calendar.getInstance().getTime())) {
             return null;
         }
 
 //        返回Token中保存的用户信息, body中的数据用=匹配，必须转化为使用: 匹配，才能正确被JSON转成LoginUserInfo格式
-        String corrected = body.get(AuthorityConstant.JWT_USER_INFO_KEY).toString().replace('=', ':').replaceAll("([a-zA-Z0-9]+)", "\"$1\"");
-        return JSON.parseObject(corrected, LoginUserInfo.class);
+        String corrected = body.get(AuthorityConstant.JWT_USER_INFO_KEY).toString();
+//                .replace('=', ':').replaceAll("([a-zA-Z0-9]+)", "\"$1\"");
+        log.info("corrected: [{}]", corrected);
+        return corrected;
     }
 
     //    通过公钥解析JWT Token

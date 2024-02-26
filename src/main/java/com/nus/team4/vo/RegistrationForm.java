@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 public class RegistrationForm {
     String cardNumber;
 
+    String securityCode;
+
     String username;
 
 //    md5加密的密码

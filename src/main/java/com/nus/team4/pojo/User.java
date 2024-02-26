@@ -1,16 +1,14 @@
 package com.nus.team4.pojo;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.io.Serializable;
 import java.util.Date;
+
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User implements Serializable {
+public class User {
     /** 自增id */
     private Long id;
 
@@ -28,4 +26,5 @@ public class User implements Serializable {
 
     /** 更新时间 */
     private Date updateTime;
+
 }
