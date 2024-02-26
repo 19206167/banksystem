@@ -14,10 +14,4 @@ public class RegistrationForm {
 
 //    md5加密的密码
     String password;
-
-    String name;
-
-    String email;
-
-    String phone;
 }

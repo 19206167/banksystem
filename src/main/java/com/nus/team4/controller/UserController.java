@@ -5,12 +5,10 @@ import com.nus.team4.service.UserService;
 import com.nus.team4.vo.JwtToken;
 import com.nus.team4.vo.RegistrationForm;
 import com.nus.team4.vo.UsernameAndPassword;
+import jdk.nashorn.internal.parser.Token;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -27,8 +25,14 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public Result register(@RequestBody RegistrationForm registrationForm) throws Exception {
+    public Result<String> register(@RequestBody RegistrationForm registrationForm) {
         log.info("调用方法： [{}]", "register");
         return userService.register(registrationForm);
+    }
+
+    @GetMapping("/logout")
+    public Result<String> logout(@RequestBody JwtToken token) throws Exception {
+        log.info("调用方法：[{}]", "logout");
+        return userService.logout(token.getToken());
     }
 }

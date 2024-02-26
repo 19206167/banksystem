@@ -1,5 +1,6 @@
 package com.nus.team4.mapper;
 import com.nus.team4.pojo.User;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -16,4 +17,7 @@ public interface UserMapper {
 
     @Select("SELECT * FROM t_user where card_id = #{cardId}")
     User findByCardId(Long cardId);
+
+    @Insert("insert into t_user (card_id, username, password) values (#{cardId}, #{username}, #{password})")
+    void createNewUser(Long cardId, String username, String password);
 }

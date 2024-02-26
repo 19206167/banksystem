@@ -14,5 +14,7 @@ public interface UserService {
 
     Result<JwtToken> login(UsernameAndPassword usernameAndPassword) throws Exception;
 
-    Result register(RegistrationForm registrationForm);
+    Result<String> register(RegistrationForm registrationForm);
+
+    Result<String> logout(String username) throws Exception;
 }

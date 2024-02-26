@@ -1,11 +1,13 @@
 package com.nus.team4.service.impl;
 
 import com.nus.team4.advice.Result;
+import com.nus.team4.constant.AuthorityConstant;
 import com.nus.team4.mapper.CardMapper;
 import com.nus.team4.pojo.Card;
 import com.nus.team4.pojo.User;
 import com.nus.team4.service.UserService;
 import com.nus.team4.util.JwtUtil;
+import com.nus.team4.util.RedisUtil;
 import com.nus.team4.vo.JwtToken;
 import com.nus.team4.vo.LoginUserInfo;
 import com.nus.team4.vo.RegistrationForm;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.nus.team4.mapper.UserMapper;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -25,6 +28,9 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     private CardMapper cardMapper;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Autowired
     public UserServiceImpl(UserMapper userMapper, CardMapper cardMapper) {
@@ -54,12 +60,17 @@ public class UserServiceImpl implements UserService {
 //        不能正常登录返回null
         if (user == null) {
             log.error("cannot find user: [{}]", usernameAndPassword.getUsername());
-            return Result.error("cannot find user");
+            return Result.error(0, "cannot find user");
         }
 
         LoginUserInfo loginUserInfo = new LoginUserInfo(user.getId(), user.getUsername());
 
-        return Result.success(new JwtToken(JwtUtil.createJWT(loginUserInfo)), "登录成功");
+        String jwt = JwtUtil.createJWT(loginUserInfo);
+
+//        将jwt存入redis中，鉴权时取出
+        redisUtil.set(AuthorityConstant.JWT_USER_INFO_KEY +usernameAndPassword.getUsername(), jwt);
+
+        return Result.success(new JwtToken(jwt), "登录成功");
     }
 
 //    注册账户方法
@@ -75,25 +86,38 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.findByUsername(registrationForm.getUsername());
         if (user != null) {
             log.error("username has been registered.");
-            return Result.error("username has been registered.");
+            return Result.error(0,"username has been registered.");
         }
 
         Card card = cardMapper.findByCardNumber(registrationForm.getCardNumber());
 
         if (card == null) {
             log.info("card number not exists. ");
-            return Result.error("card number not exists");
+            return Result.error(0,"card number not exists");
         }
 
         user = userMapper.findByCardId(card.getId());
 
         if (user != null) {
             log.info("card has been bound to another account.");
-            return Result.error("card has been bound to another account.");
+            return Result.error(0,"card has been bound to another account.");
         }
 
+        userMapper.createNewUser(card.getId(),
+                registrationForm.getUsername(), registrationForm.getPassword());
 
-        return null;
+        return Result.success("registration success!");
+    }
+
+    @Override
+    public Result<String> logout(String token) throws Exception {
+        LoginUserInfo loginUserInfo = JwtUtil.parseUserInfoFromToken(token);
+//        让redis中的token失效
+        redisUtil.expire(AuthorityConstant.JWT_USER_INFO_KEY + loginUserInfo.getUsername()
+                , 0L, TimeUnit.SECONDS);
+        redisUtil.set(AuthorityConstant.TOKEN_BLACKLIST_CACHE_PREFIX + token, token, 11L, TimeUnit.MINUTES);
+
+        return Result.success("已成功登出");
     }
 }
 
