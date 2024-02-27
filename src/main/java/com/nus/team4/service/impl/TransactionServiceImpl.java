@@ -55,18 +55,16 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
 //        执行转账逻辑
-        senderCard.setBalance(senderCard.getBalance().divide(transactionForm.getAmount()));
+        senderCard.setBalance(senderCard.getBalance().subtract(transactionForm.getAmount()));
+        cardMapper.updateCardBalance(senderCard.getIban(), senderCard.getBalance());
+
         receiverCard.setBalance(receiverCard.getBalance().add(transactionForm.getAmount()));
+        cardMapper.updateCardBalance(receiverCard.getIban(), receiverCard.getBalance());
 
         transactionMapper.insertTransactionInfo(transactionForm.getSenderCardNumber(),
                 transactionForm.getReceiverCardNumber(), transactionForm.getAmount());
 
         return Result.success("转账成功");
     }
-
-
-
-
-
 }
 
