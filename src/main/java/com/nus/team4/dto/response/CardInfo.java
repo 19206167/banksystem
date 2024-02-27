@@ -1,4 +1,4 @@
-package com.nus.team4.dto;
+package com.nus.team4.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;

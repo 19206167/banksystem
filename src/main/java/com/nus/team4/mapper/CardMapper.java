@@ -17,7 +17,7 @@ public interface CardMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insertCard(Card card);
 
-//    更新钱
+    //   更新钱
     @Update("UPDATE t_card SET balance=#{newBalance} where iban=#{cardNumber}")
     int updateCardBalance(String cardNumber, BigDecimal newBalance);
 

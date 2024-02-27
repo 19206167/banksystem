@@ -1,4 +1,4 @@
-package com.nus.team4.dto;
+package com.nus.team4.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,11 +18,6 @@ public class AccountOpenForm {
 
     @NotBlank(message = "Account Type is required")
     private String accountType;
-
-    @NotBlank(message = "Status is required")
-    private String status;
-
-    private BigDecimal balance = BigDecimal.ZERO;
 
     @NotBlank(message = "Email is required")
     @Pattern(regexp = ".+@.+\\..+", message = "Invalid email format")

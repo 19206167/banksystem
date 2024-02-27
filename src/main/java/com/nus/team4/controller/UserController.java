@@ -4,18 +4,18 @@ import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.ShearCaptcha;
 import com.nus.team4.advice.Result;
 import com.nus.team4.service.UserService;
-import com.nus.team4.dto.AccountOpenForm;
+import com.nus.team4.dto.request.AccountOpenForm;
 import com.nus.team4.util.RedisUtil;
 import com.nus.team4.vo.JwtToken;
 import com.nus.team4.vo.RegistrationForm;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.util.MapUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import sun.misc.BASE64Encoder;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class UserController {
 //    }
 
     @PostMapping("/openAccount")
-    public Result openAccount(@RequestBody AccountOpenForm accountOpenForm) throws Exception {
+    public Result openAccount(@Valid @RequestBody AccountOpenForm accountOpenForm) throws Exception {
         log.info("调用方法： [{}]", "openAccount");
         return userService.openAccount(accountOpenForm);
     }

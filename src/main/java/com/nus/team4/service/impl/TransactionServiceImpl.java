@@ -68,16 +68,44 @@ public class TransactionServiceImpl implements TransactionService {
         return Result.success("转账成功");
     }
 
-    public void deposit(BigDecimal amount, String iban){
+    @Transactional
+    @Override
+    public Result deposit(BigDecimal amount, String iban){
         Card card = cardMapper.findByCardNumber(iban);
+
+        if (card == null) {
+            log.error("卡号错误");
+            return Result.error(0, "卡号错误");
+        }
+
         card.setBalance(card.getBalance().add(amount));
         cardMapper.updateCard(card);
+        transactionMapper.insertTransactionInfo("111",
+                iban, amount);
+        return Result.success("deposit success");
     }
 
-    public void withdraw(BigDecimal amount, String iban){
+    @Transactional
+    @Override
+    public Result withdraw(BigDecimal amount, String iban){
         Card card = cardMapper.findByCardNumber(iban);
+
+        if (card == null) {
+            log.error("卡号错误");
+            return Result.error(0, "卡号错误");
+        }
+
+        if (card.getBalance().compareTo(amount) < 0) {
+            log.error("账户余额不足");
+            return Result.error(0, "账户余额不足");
+        }
+
         card.setBalance(card.getBalance().subtract(amount));
         cardMapper.updateCard(card);
+
+        transactionMapper.insertTransactionInfo(iban,
+                "222", amount);
+        return Result.success("withdraw success");
     }
 
 }
