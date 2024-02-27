@@ -100,8 +100,12 @@ public class UserServiceImpl implements UserService {
         Card card = cardMapper.findByCardNumber(registrationForm.getCardNumber());
 
         if (card == null) {
-            log.info("card number not exists. ");
+            log.info("card number no exists. ");
             return Result.error(0,"card number not exists");
+        }
+        if (!card.getSecurityCode().equals(registrationForm.getSecurityCode())) {
+            log.info("card security wrong!");
+            return Result.error(0,"card security wrong!");
         }
 
         user = userMapper.findByCardId(card.getId());
