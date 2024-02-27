@@ -8,4 +8,6 @@ import com.nus.team4.vo.TransactionForm;
 
 public interface TransactionService {
     Result transaction(TransactionForm transactionForm) throws BusinessException;
+
+    Result getTransactionHistory(String userId, int pageNow, int pageSize);
 }

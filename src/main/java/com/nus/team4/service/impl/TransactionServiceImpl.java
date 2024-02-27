@@ -1,11 +1,16 @@
 package com.nus.team4.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.nus.team4.advice.Result;
 import com.nus.team4.common.ResponseCode;
 import com.nus.team4.exception.BusinessException;
 import com.nus.team4.mapper.CardMapper;
 import com.nus.team4.mapper.TransactionMapper;
+import com.nus.team4.mapper.UserMapper;
 import com.nus.team4.pojo.Card;
+import com.nus.team4.pojo.Transaction;
+import com.nus.team4.pojo.User;
 import com.nus.team4.service.TransactionService;
 import com.nus.team4.vo.TransactionForm;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -24,6 +30,9 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Autowired
     private TransactionMapper transactionMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     //    转账是事务的，保证一致性
     @Transactional
@@ -64,9 +73,27 @@ public class TransactionServiceImpl implements TransactionService {
         cardMapper.updateCardBalance(receiverCard.getIban(), receiverCard.getBalance());
 
         transactionMapper.insertTransactionInfo(transactionForm.getSenderCardNumber(),
-                transactionForm.getReceiverCardNumber(), transactionForm.getAmount());
+                transactionForm.getReceiverCardNumber(), transactionForm.getAmount(),
+                userMapper.findByCardId(senderCard.getId()).getId());
 
         return Result.success("转账成功");
+    }
+
+    @Override
+    public Result getTransactionHistory(String username, int pageNow, int pageSize) {
+        log.info(username);
+
+        User user = userMapper.findByUsername("lzj");
+
+        log.info("transaction history user: [{}]", user);
+
+        PageHelper.startPage(pageNow, pageSize);
+
+        List<Transaction> transactions = transactionMapper.selectTransactionByPage(user.getId());
+
+        log.info("transactions: [{}]", transactions);
+
+        return Result.success(transactions, "get transaction history.");
     }
 }
 

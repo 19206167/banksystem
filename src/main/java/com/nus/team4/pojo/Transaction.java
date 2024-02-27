@@ -15,6 +15,8 @@ public class Transaction {
 
     private Long id;
 
+    private Long userId;
+
     private String senderCardNumber;
 
     private String receiverCardNumber;
