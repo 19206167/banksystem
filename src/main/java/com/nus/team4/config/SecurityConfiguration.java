@@ -35,6 +35,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     AuthenticationFailureHandler authenticationFailureHandler(){
         return new MyAuthenticationFailureHandler();
     }
+
     /**
      * jwt过滤器
      * @return
@@ -61,6 +62,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .addFilter(jwtAuthenticationFilter());
 
         http.authorizeRequests().antMatchers("/user/**").permitAll()
+                .antMatchers("/transaction/**").permitAll()
                 .anyRequest().authenticated()
                 .and().formLogin().loginProcessingUrl("/user/login")
                 .successHandler(authenticationSuccessHandler())

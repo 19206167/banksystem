@@ -4,11 +4,12 @@ package com.nus.team4.mapper;
 import com.nus.team4.pojo.Card;
 import org.apache.ibatis.annotations.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
 public interface CardMapper {
-    @Select("Select * from t_card where card_number = #{iban}")
+    @Select("Select * from t_card where iban = #{iban}")
     Card findByCardNumber(String iban);
 
     // 插入新卡信息
@@ -16,8 +17,12 @@ public interface CardMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insertCard(Card card);
 
+//    更新钱
+    @Update("UPDATE t_card SET balance=#{newBalance} where iban=#{cardNumber}")
+    int updateCardBalance(String cardNumber, BigDecimal newBalance);
+
     // 更新卡信息
-    @Update("UPDATE t_card SET SecurityCode=#{SecurityCode}, balance=#{balance}, email=#{email}, name=#{name}, phone=#{phone}, update_time=#{updateTime} WHERE cardNumber = #{iban}")
+    @Update("UPDATE t_card SET SecurityCode=#{SecurityCode}, balance=#{balance}, email=#{email}, name=#{name}, phone=#{phone}, update_time=#{updateTime} WHERE iban = #{iban}")
     int updateCard(Card card);
 
     // 删除卡信息
