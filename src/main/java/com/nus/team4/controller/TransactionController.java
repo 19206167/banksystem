@@ -1,6 +1,7 @@
 package com.nus.team4.controller;
 
 import com.nus.team4.advice.Result;
+import com.nus.team4.exception.BusinessException;
 import com.nus.team4.pojo.Transaction;
 import com.nus.team4.service.TransactionService;
 import com.nus.team4.vo.TransactionForm;
@@ -23,7 +24,7 @@ public class TransactionController {
     }
 
     @PostMapping("/transfer")
-    public Result transfer(@RequestBody TransactionForm transactionForm){
+    public Result transfer(@RequestBody TransactionForm transactionForm) throws BusinessException {
         return transactionService.transaction(transactionForm);
 
     }

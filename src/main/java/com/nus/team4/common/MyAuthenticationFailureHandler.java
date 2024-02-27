@@ -19,6 +19,6 @@ public class MyAuthenticationFailureHandler extends JSONAuthentication implement
     public void onAuthenticationFailure(HttpServletRequest httpServletRequest,
                                         HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
         //继承封装的输出JSON格式类，并调用父类方法即可
-        this.WriteJSON(httpServletRequest,httpServletResponse, Result.error(0, e.getMessage()));
+        this.WriteJSON(httpServletRequest,httpServletResponse, Result.error(ResponseCode.COMMON_FAIL.getCode(), e.getMessage()));
     }
 }

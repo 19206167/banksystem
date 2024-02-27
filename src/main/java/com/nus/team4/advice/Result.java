@@ -1,5 +1,7 @@
 package com.nus.team4.advice;
 
+import com.nus.team4.common.ResponseCode;
+
 import java.io.Serializable;
 
 /**
@@ -17,16 +19,24 @@ public class Result<T> implements Serializable {
 
     public static <T> Result<T> success(String msg){
         Result<T> result = new Result<>();
-        result.code = 200;
-        result.msg = msg;
+        result.code = ResponseCode.SUCCESS.getCode();
+        if (msg == null || msg.equals("")) {
+            result.msg = ResponseCode.SUCCESS.getMessage();
+        } else {
+            result.msg = msg;
+        }
         return result;
     }
 
     public static <T> Result<T> success(T data, String msg) {
         Result<T> result = new Result<>();
         result.data = data;
-        result.code = 200;
-        result.msg = msg;
+        result.code = ResponseCode.SUCCESS.getCode();
+        if (msg == null || msg.equals("")) {
+            result.msg = ResponseCode.SUCCESS.getMessage();
+        } else {
+            result.msg = msg;
+        }
         return result;
     }
 

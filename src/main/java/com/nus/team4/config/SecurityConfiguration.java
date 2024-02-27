@@ -1,6 +1,7 @@
 package com.nus.team4.config;
 
 
+import com.nus.team4.common.CustomAuthenticationEntryPoint;
 import com.nus.team4.filter.CaptchaFilter;
 import com.nus.team4.filter.JwtAuthenticationFilter;
 import com.nus.team4.common.MyAuthenticationFailureHandler;
@@ -47,8 +48,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
 //    验证码过滤器
-    CaptchaFilter captchaFilter() throws Exception{
+    CaptchaFilter captchaFilter(){
         return new CaptchaFilter();
+    }
+
+    @Bean
+    CustomAuthenticationEntryPoint customAuthenticationEntryPoint() {
+        return new CustomAuthenticationEntryPoint();
     }
 
 
@@ -62,11 +68,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .addFilter(jwtAuthenticationFilter());
 
         http.authorizeRequests().antMatchers("/user/**").permitAll()
-                .antMatchers("/transaction/**").permitAll()
+                .antMatchers("/transaction/transfer").permitAll()
                 .anyRequest().authenticated()
+//                登录
                 .and().formLogin().loginProcessingUrl("/user/login")
+//                登录成功，失败处理器
                 .successHandler(authenticationSuccessHandler())
-                .failureHandler(authenticationFailureHandler());
+                .failureHandler(authenticationFailureHandler())
+//                登出
+                .and().logout().logoutUrl("/user/logout")
+//                登出退回主界面
+                .logoutSuccessUrl("/")
+                .deleteCookies("JSESSIONID")
+                .and().exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPoint());
 
         //关闭CSRF跨域
         http.csrf().disable();
