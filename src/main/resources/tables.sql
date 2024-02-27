@@ -1,5 +1,3 @@
-create DATABASE bank;
-
 CREATE TABLE t_user (
     id SERIAL PRIMARY KEY,
     card_id int unique not null,
@@ -23,4 +21,14 @@ CREATE TABLE t_card (
     phone VARCHAR(20),
     create_time TIMESTAMP default CURRENT_TIMESTAMP NOT NULL,
     update_time TIMESTAMP default CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE t_transaction (
+   id SERIAL PRIMARY KEY,
+   senderCardNumber VARCHAR(34) NOT NULL,
+   receiverCardNumber VARCHAR(34) NOT NULL,
+   amount DECIMAL(15, 2) NOT NULL,
+   deleted BOOLEAN DEFAULT FALSE,
+   createdTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
+   updatedTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null
 );
