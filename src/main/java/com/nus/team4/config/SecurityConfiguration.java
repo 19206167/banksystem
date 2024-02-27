@@ -68,7 +68,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .addFilter(jwtAuthenticationFilter());
 
         http.authorizeRequests().antMatchers("/user/**").permitAll()
-                .antMatchers("/transaction/**").permitAll()
+//                .antMatchers("/transaction/**").permitAll()
                 .anyRequest().authenticated()
 //                登录
                 .and().formLogin().loginProcessingUrl("/user/login")
