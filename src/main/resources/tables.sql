@@ -23,12 +23,14 @@ CREATE TABLE t_card (
     update_time TIMESTAMP default CURRENT_TIMESTAMP NOT NULL
 );
 
+drop table t_transaction;
+
 CREATE TABLE t_transaction (
    id SERIAL PRIMARY KEY,
-   senderCardNumber VARCHAR(34) NOT NULL,
-   receiverCardNumber VARCHAR(34) NOT NULL,
+   sender_card_number VARCHAR(34) NOT NULL,
+   receiver_card_number VARCHAR(34) NOT NULL,
    amount DECIMAL(15, 2) NOT NULL,
    deleted BOOLEAN DEFAULT FALSE,
-   createdTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
-   updatedTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null
+   created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
+   updated_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null
 );
