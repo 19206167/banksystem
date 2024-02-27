@@ -73,25 +73,27 @@ public class UserController {
         log.info("code: [{}]", code);
 
         //写入到流中
-//        BufferedImage bufferedImage = captcha.getImage();
-//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//        ImageIO.write(bufferedImage, "jpg", outputStream);
+        BufferedImage bufferedImage = captcha.getImage();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "jpg", outputStream);
         //进行base64编码
-//        BASE64Encoder base64Encoder = new BASE64Encoder();
+        BASE64Encoder base64Encoder = new BASE64Encoder();
         //编码前缀
-//        String str = "data:image/jpeg;base64,";
+        String str = "data:image/jpeg;base64,";
         //使用hutool自己提供的方法，直接获取base64编码
-        //String base64 = str + captcha.getImageBase64();
-//        String base64Image = str + base64Encoder.encode(outputStream.toByteArray());
+        String base64 = str + captcha.getImageBase64();
+        String base64Image = str + base64Encoder.encode(outputStream.toByteArray());
         //将验证码和对应的随机key值写入缓存数据库
         redisUtil.set(key, code, 600l, TimeUnit.SECONDS);
-//        Map<String, String> res = new HashMap<>();
-//        res.put(key, base64Image);
 
-        response.setContentType("image/jpeg");
-        response.setHeader("Pragma", "No-cache");
+        Map<String, String> res = new HashMap<>();
+        res.put(key, base64Image);
 
-        captcha.write(response.getOutputStream());
+//        response.setContentType("image/jpeg");
+//        response.setHeader("Pragma", "No-cache");
+//        Map<String, String> map = new HashMap<>();
+
+//        captcha.write(response.getOutputStream());
 
         response.getOutputStream().close();
 //        return Result.success(base64Image, "验证码");

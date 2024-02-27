@@ -49,8 +49,10 @@ public class CaptchaFilter extends OncePerRequestFilter {
                 validate(httpServletRequest);
             }catch (AuthenticationException exception){
                 //如果不正确，扑获到验证码异常就交给认证失败处理器
-                authenticationFailureHandler.onAuthenticationFailure(
-                        httpServletRequest,httpServletResponse, exception);
+                if (authenticationFailureHandler == null)
+                    authenticationFailureHandler = SpringContextUtil.getBean(AuthenticationFailureHandler.class);
+
+                authenticationFailureHandler.onAuthenticationFailure(httpServletRequest,httpServletResponse, exception);
             }
 
         }
