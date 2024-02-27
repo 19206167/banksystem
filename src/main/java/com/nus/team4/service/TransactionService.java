@@ -1,8 +1,10 @@
 package com.nus.team4.service;
 
 
-import java.math.BigDecimal;
+import com.nus.team4.advice.Result;
+import com.nus.team4.vo.TransactionForm;
+
 
 public interface TransactionService {
-    void transaction(String senderCardNumber, String receiverCardNumber, BigDecimal amount);
+    Result transaction(TransactionForm transactionForm);
 }
