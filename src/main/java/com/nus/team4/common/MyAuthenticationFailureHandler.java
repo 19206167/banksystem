@@ -12,12 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
+@Component
 public class MyAuthenticationFailureHandler extends JSONAuthentication implements AuthenticationFailureHandler {
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
+    public void onAuthenticationFailure(HttpServletRequest httpServletRequest,
+                                        HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
         //继承封装的输出JSON格式类，并调用父类方法即可
-        this.WriteJSON(httpServletRequest,httpServletResponse, Result.error(0, "login error!"));
+        this.WriteJSON(httpServletRequest,httpServletResponse, Result.error(0, e.getMessage()));
     }
-
 }
