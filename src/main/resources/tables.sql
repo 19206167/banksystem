@@ -25,6 +25,7 @@ CREATE TABLE t_card (
 
 CREATE TABLE t_transaction (
    id SERIAL PRIMARY KEY,
+   user_id long not null,
    sender_card_number VARCHAR(34) NOT NULL,
    receiver_card_number VARCHAR(34) NOT NULL,
    amount DECIMAL(15, 2) NOT NULL,

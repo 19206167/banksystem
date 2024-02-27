@@ -3,6 +3,7 @@ package com.nus.team4.controller;
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.ShearCaptcha;
 import com.nus.team4.advice.Result;
+import com.nus.team4.exception.BusinessException;
 import com.nus.team4.service.UserService;
 import com.nus.team4.dto.AccountOpenForm;
 import com.nus.team4.util.RedisUtil;
@@ -48,7 +49,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public Result<String> register(@RequestBody RegistrationForm registrationForm) {
+    public Result<String> register(@RequestBody RegistrationForm registrationForm) throws BusinessException {
         log.info("调用方法： [{}]", "register");
         return userService.register(registrationForm);
     }
@@ -56,8 +57,8 @@ public class UserController {
     @GetMapping("/logout")
     public Result<String> logout(@RequestBody JwtToken token) throws Exception {
         log.info("调用方法：[{}]", "logout");
-        return Result.success("logout");
-//        return userService.logout(token.getToken());
+//        return Result.success("logout");
+        return userService.logout(token.getToken());
     }
 
     /*获取验证码，借助hutool的验证码生成工具类*/
