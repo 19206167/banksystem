@@ -49,4 +49,8 @@ public class AuthorityConstant {
 
     //    JWT中存储用户信息的key
     public final static String JWT_USER_INFO_KEY = "bank-user";
+
+
+    //    token黑名单前缀
+    public final static String TOKEN_BLACKLIST_CACHE_PREFIX = "token-black-list";
 }
