@@ -45,7 +45,7 @@ public class MyAuthenticationSuccessHandler extends JSONAuthentication implement
 
         // 将jwt存入redis中，鉴权时取出, 更新过期时间
         redisUtil.set(key.toString(), jwt);
-        redisUtil.expire(key.toString(), 10l, TimeUnit.MINUTES);
+        redisUtil.expire(key.toString(), Long.valueOf(AuthorityConstant.DEFAULT_EXPIRE_MINUTE + 1), TimeUnit.MINUTES);
 
         this.WriteJSON(httpServletRequest, httpServletResponse, Result.success("login success!"));
     }

@@ -23,8 +23,6 @@ CREATE TABLE t_card (
     update_time TIMESTAMP default CURRENT_TIMESTAMP NOT NULL
 );
 
-drop table t_transaction;
-
 CREATE TABLE t_transaction (
    id SERIAL PRIMARY KEY,
    sender_card_number VARCHAR(34) NOT NULL,
