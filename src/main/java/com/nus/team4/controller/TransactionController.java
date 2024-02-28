@@ -2,6 +2,7 @@ package com.nus.team4.controller;
 
 import com.nus.team4.advice.Result;
 import com.nus.team4.dto.request.BalanceDto;
+import com.nus.team4.pojo.Transaction;
 import com.nus.team4.service.TransactionService;
 import com.nus.team4.vo.TransactionForm;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +26,9 @@ public class TransactionController {
     @PostMapping("/transfer")
     public Result transfer(@RequestBody TransactionForm transactionForm){
         return transactionService.transaction(transactionForm);
+
     }
 
-    //for test
     @PostMapping("/deposit")
     public Result<String> deposit(@RequestBody BalanceDto balanceDto) {
         log.info("调用方法： [{}]", "deposit");

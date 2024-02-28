@@ -1,9 +1,11 @@
 package com.nus.team4.service.impl;
 
 import com.nus.team4.advice.Result;
-import com.nus.team4.dto.request.AccountOpenForm;
-import com.nus.team4.dto.response.CardInfo;
+import com.nus.team4.common.ResponseCode;
+import com.nus.team4.dto.AccountOpenForm;
+import com.nus.team4.dto.CardInfo;
 import com.nus.team4.constant.AuthorityConstant;
+import com.nus.team4.exception.BusinessException;
 import com.nus.team4.mapper.CardMapper;
 import com.nus.team4.pojo.Card;
 import com.nus.team4.pojo.User;
@@ -11,11 +13,15 @@ import com.nus.team4.service.UserService;
 import com.nus.team4.util.AccountUtil;
 import com.nus.team4.util.JwtUtil;
 import com.nus.team4.util.RedisUtil;
+import com.nus.team4.vo.JwtToken;
+import com.nus.team4.vo.LoginUserInfo;
 import com.nus.team4.vo.RegistrationForm;
+import com.nus.team4.vo.UsernameAndPassword;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.nus.team4.mapper.UserMapper;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 
 import java.math.BigDecimal;
@@ -47,14 +53,14 @@ public class UserServiceImpl implements UserService {
         return userMapper.findById(id);
     }
 
-    @Override
-    public User getUserByUsername(String username) {
-        User user = userMapper.findByUsername(username);
-        if (Objects.isNull(user)) {
-            throw new RuntimeException("用户不存在或者密码错误。");
-        }
-        return user;
-    }
+//    @Override
+//    public User getUserByUsername(String username) {
+//        User user = userMapper.findByUsername(username);
+//        if (Objects.isNull(user)) {
+//            throw new RuntimeException("用户不存在或者密码错误。");
+//        }
+//        return user;
+//    }
 
 //    @Override
 //    public Result<JwtToken> login(UsernameAndPassword usernameAndPassword) throws Exception {
@@ -87,29 +93,29 @@ public class UserServiceImpl implements UserService {
      * 如果都满足，进行注册，添加一条新数据
      **/
     @Override
-    public Result<String> register(RegistrationForm registrationForm) {
+    public Result<String> register(RegistrationForm registrationForm) throws BusinessException {
         User user = userMapper.findByUsername(registrationForm.getUsername());
         if (user != null) {
             log.error("username has been registered.");
-            return Result.error(0,"username has been registered.");
+            throw new BusinessException(ResponseCode.USER_ACCOUNT_ALREADY_EXIST.getCode(), "username has been registered.");
         }
 
         Card card = cardMapper.findByCardNumber(registrationForm.getCardNumber());
 
         if (card == null) {
             log.info("card number no exists. ");
-            return Result.error(0,"card number not exists");
+            throw new BusinessException(ResponseCode.USER_CARD_NOT_EXIST.getCode(), "card number not exists");
         }
         if (!card.getSecurityCode().equals(registrationForm.getSecurityCode())) {
             log.info("card security wrong!");
-            return Result.error(0,"card security wrong!");
+            throw new BusinessException(ResponseCode.CARD_SECURITY_WRONG.getCode(), "card security wrong!");
         }
 
         user = userMapper.findByCardId(card.getId());
 
         if (user != null) {
             log.info("card has been bound to another account.");
-            return Result.error(0,"card has been bound to another account.");
+            throw new BusinessException(ResponseCode.USER_ACCOUNT_DISABLE.getCode(), "card has been bound to another account.");
         }
 
         userMapper.createNewUser(card.getId(),
@@ -141,7 +147,7 @@ public class UserServiceImpl implements UserService {
                 .SecurityCode(cvc)
                 .currency(accountOpenForm.getCurrency())
                 .accountType(accountOpenForm.getAccountType())
-                .status("Active")
+                .status(accountOpenForm.getStatus())
                 .balance(new BigDecimal("0.00"))
                 .createTime(new Date())
                 .updateTime(new Date())
@@ -152,4 +158,3 @@ public class UserServiceImpl implements UserService {
         return Result.success(cardInfo, "account created");
     }
 }
-

@@ -24,7 +24,7 @@ public class MyUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        log.error("调用loadUserByUsername方法");
+        log.info("调用loadUserByUsername方法");
 
         com.nus.team4.pojo.User user = userMapper.findByUsername(username);
 
@@ -37,7 +37,6 @@ public class MyUserDetailsService implements UserDetailsService {
         // 不涉及具体权限，随便整一个，不能为空
         List<GrantedAuthority> authorities =
                 AuthorityUtils.commaSeparatedStringToAuthorityList("role");
-
 
         return new User(user.getUsername(),
                 new BCryptPasswordEncoder().encode(user.getPassword()), authorities);
