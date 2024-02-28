@@ -17,6 +17,7 @@ mybatis:
 
 server:
   port: 8080
+  httpPort: 8081
   ssl:
     protocol: TLS
     key-store: classpath:testserver.keystore
