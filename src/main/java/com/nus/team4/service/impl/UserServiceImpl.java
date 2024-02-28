@@ -94,6 +94,7 @@ public class UserServiceImpl implements UserService {
      **/
     @Override
     public Result<String> register(RegistrationForm registrationForm) throws BusinessException {
+        log.info(registrationForm.getUsername());
         User user = userMapper.findByUsername(registrationForm.getUsername());
         if (user != null) {
             log.error("username has been registered.");

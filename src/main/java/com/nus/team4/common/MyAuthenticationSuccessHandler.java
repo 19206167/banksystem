@@ -1,5 +1,6 @@
 package com.nus.team4.common;
 
+import com.alibaba.fastjson.JSON;
 import com.nus.team4.advice.Result;
 import com.nus.team4.constant.AuthorityConstant;
 import com.nus.team4.exception.BusinessException;
@@ -17,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -46,13 +48,16 @@ public class MyAuthenticationSuccessHandler extends JSONAuthentication implement
 
         log.info("login success!");
 
+        log.info(jwt);
+
         httpServletResponse.setHeader("token", jwt);
+
         StringBuilder key = new StringBuilder(AuthorityConstant.JWT_USER_INFO_KEY).append(user.getUsername());
 
         // 将jwt存入redis中，鉴权时取出, 更新过期时间
         redisUtil.set(key.toString(), jwt);
         redisUtil.expire(key.toString(), Long.valueOf(AuthorityConstant.DEFAULT_EXPIRE_MINUTE), TimeUnit.MINUTES);
 
-        this.WriteJSON(httpServletRequest, httpServletResponse, Result.success("login success!"));
+        this.WriteJSON(httpServletRequest, httpServletResponse, Result.success(jwt, "login success!"));
     }
 }
