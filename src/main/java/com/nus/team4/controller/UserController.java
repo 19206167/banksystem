@@ -63,7 +63,7 @@ public class UserController {
 
     /*获取验证码，借助hutool的验证码生成工具类*/
     @GetMapping("/getCaptcha")
-    public void getCode(HttpServletResponse response) throws IOException {
+    public Result<Map<String, String>> getCode(HttpServletResponse response) throws IOException {
         //生成随机码，作为验证码的key值，传给前端（方便验证时，根据key从redis中取出正确的验证码value）
         String key = UUID.randomUUID().toString();
 
@@ -82,21 +82,22 @@ public class UserController {
         //编码前缀
         String str = "data:image/jpeg;base64,";
         //使用hutool自己提供的方法，直接获取base64编码
-        String base64 = str + captcha.getImageBase64();
+//        String base64 = str + captcha.getImageBase64();
         String base64Image = str + base64Encoder.encode(outputStream.toByteArray());
         //将验证码和对应的随机key值写入缓存数据库
         redisUtil.set(key, code, 600l, TimeUnit.SECONDS);
 
         Map<String, String> res = new HashMap<>();
-        res.put(key, base64Image);
-
+        res.put("key", key);
+        res.put("image", base64Image);
 //        response.setContentType("image/jpeg");
 //        response.setHeader("Pragma", "No-cache");
 //        Map<String, String> map = new HashMap<>();
 
 //        captcha.write(response.getOutputStream());
 
-        response.getOutputStream().close();
-//        return Result.success(base64Image, "验证码");
+//        response.getOutputStream().write("verificationCode", res);
+//        response.getOutputStream().close();
+        return Result.success(res, "验证码");
     }
 }
