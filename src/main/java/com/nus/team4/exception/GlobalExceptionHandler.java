@@ -1,4 +1,4 @@
-package com.nus.team4.common;
+package com.nus.team4.exception;
 
 import com.nus.team4.advice.Result;
 import com.nus.team4.exception.BusinessException;
@@ -33,12 +33,6 @@ public class GlobalExceptionHandler {
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining(", "));
         return Result.error(400, errorMsg);
-    }
-    
-//    只要捕获到BusinessException异常，就执行此方法
-    public Result error(BusinessException businessException) {
-        log.error("business exception: [{}]" + businessException.getErrMsg());
-        return Result.error(businessException.getCode(), businessException.getErrMsg());
     }
 
 
