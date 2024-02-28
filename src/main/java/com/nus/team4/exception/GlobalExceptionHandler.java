@@ -46,14 +46,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = BusinessException.class)
     @ResponseBody
     public Result error(BusinessException businessException) {
-        log.error("business exception: [{}]" + businessException.getErrMsg());
+        log.error("business exception: [{}]", businessException.getErrMsg());
         return Result.error(businessException.getCode(), businessException.getErrMsg());
     }
 
     @ExceptionHandler(value = IOException.class)
     @ResponseBody
     public Result error(IOException ioException) {
-        log.error("ioexception: [{}]" + ioException);
+        log.error("ioexception: [{}]", ioException);
         return Result.error(ResponseCode.COMMON_FAIL.getCode(), "验证码生成错误");
     }
 }

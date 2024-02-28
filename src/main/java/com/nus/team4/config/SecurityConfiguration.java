@@ -77,7 +77,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .failureHandler(authenticationFailureHandler())
 //                登出
                 .and().logout().logoutUrl("/user/logout")
-//                登出退回主界面
+//                登出退回主界面, 路径可更改
                 .logoutSuccessUrl("/")
                 .deleteCookies("JSESSIONID")
                 .and().exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPoint());
