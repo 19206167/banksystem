@@ -2,12 +2,15 @@ package com.nus.team4.controller;
 
 import com.nus.team4.advice.Result;
 import com.nus.team4.dto.request.BalanceDto;
+import com.nus.team4.exception.BusinessException;
 import com.nus.team4.pojo.Transaction;
 import com.nus.team4.service.TransactionService;
 import com.nus.team4.vo.TransactionForm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -24,22 +27,22 @@ public class TransactionController {
     }
 
     @PostMapping("/transfer")
-    public Result transfer(@RequestBody TransactionForm transactionForm){
+    public Result transfer(@RequestBody TransactionForm transactionForm) throws BusinessException {
         return transactionService.transaction(transactionForm);
 
     }
 
     @PostMapping("/deposit")
-    public Result<String> deposit(@RequestBody BalanceDto balanceDto) {
+    public Result<String> deposit(@Valid @RequestBody BalanceDto balanceDto) {
         log.info("调用方法： [{}]", "deposit");
-        transactionService.deposit(balanceDto.getAmount(), balanceDto.getIban());
+        transactionService.deposit(balanceDto);
         return Result.success("deposit");
     }
 
     @PostMapping("/withdraw")
     public Result<String> withdraw(@RequestBody BalanceDto balanceDto) {
         log.info("调用方法： [{}]", "withdraw");
-        transactionService.withdraw(balanceDto.getAmount(), balanceDto.getIban());
+        transactionService.withdraw(balanceDto);
         return Result.success("deposit");
     }
 }

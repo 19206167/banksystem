@@ -1,7 +1,7 @@
 package com.nus.team4.service;
 
 import com.nus.team4.advice.Result;
-import com.nus.team4.dto.AccountOpenForm;
+import com.nus.team4.dto.request.AccountOpenForm;
 import com.nus.team4.exception.BusinessException;
 import com.nus.team4.pojo.User;
 import com.nus.team4.vo.RegistrationForm;

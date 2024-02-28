@@ -2,8 +2,8 @@ package com.nus.team4.service.impl;
 
 import com.nus.team4.advice.Result;
 import com.nus.team4.common.ResponseCode;
-import com.nus.team4.dto.AccountOpenForm;
-import com.nus.team4.dto.CardInfo;
+import com.nus.team4.dto.request.AccountOpenForm;
+import com.nus.team4.dto.response.CardInfo;
 import com.nus.team4.constant.AuthorityConstant;
 import com.nus.team4.exception.BusinessException;
 import com.nus.team4.mapper.CardMapper;
@@ -147,7 +147,7 @@ public class UserServiceImpl implements UserService {
                 .SecurityCode(cvc)
                 .currency(accountOpenForm.getCurrency())
                 .accountType(accountOpenForm.getAccountType())
-                .status(accountOpenForm.getStatus())
+                .status("Active")
                 .balance(new BigDecimal("0.00"))
                 .createTime(new Date())
                 .updateTime(new Date())

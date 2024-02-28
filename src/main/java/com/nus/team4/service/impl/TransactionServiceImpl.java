@@ -1,6 +1,7 @@
 package com.nus.team4.service.impl;
 
 import com.nus.team4.advice.Result;
+import com.nus.team4.dto.request.BalanceDto;
 import com.nus.team4.exception.BusinessException;
 import com.nus.team4.mapper.CardMapper;
 import com.nus.team4.mapper.TransactionMapper;
@@ -98,7 +99,11 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public Result deposit(BigDecimal amount, String iban){
+    public Result deposit(BalanceDto balanceDto){
+        String iban = balanceDto.getIban();
+        BigDecimal amount = balanceDto.getAmount();
+        long userId = balanceDto.getUserId();
+
         Card card = cardMapper.findByCardNumber(iban);
 
         if (card == null) {
@@ -109,13 +114,17 @@ public class TransactionServiceImpl implements TransactionService {
         card.setBalance(card.getBalance().add(amount));
         cardMapper.updateCard(card);
         transactionMapper.insertTransactionInfo("111",
-                iban, amount);
+                iban, amount, userId);
         return Result.success("deposit success");
     }
 
     @Transactional
     @Override
-    public Result withdraw(BigDecimal amount, String iban){
+    public Result withdraw(BalanceDto balanceDto){
+        String iban = balanceDto.getIban();
+        BigDecimal amount = balanceDto.getAmount();
+        long userId = balanceDto.getUserId();
+
         Card card = cardMapper.findByCardNumber(iban);
 
         if (card == null) {
@@ -132,7 +141,7 @@ public class TransactionServiceImpl implements TransactionService {
         cardMapper.updateCard(card);
 
         transactionMapper.insertTransactionInfo(iban,
-                "222", amount);
+                "222", amount, userId);
         return Result.success("withdraw success");
     }
 
