@@ -2,6 +2,7 @@ package com.nus.team4.config;
 
 
 import com.nus.team4.common.CustomAuthenticationEntryPoint;
+import com.nus.team4.filter.MyUsernamePasswordAuthenticationFilter;
 import com.nus.team4.filter.CaptchaFilter;
 import com.nus.team4.filter.JwtAuthenticationFilter;
 import com.nus.team4.common.MyAuthenticationFailureHandler;
@@ -10,6 +11,7 @@ import com.nus.team4.service.impl.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -26,6 +28,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private MyUserDetailsService userDetailsService;
+
+    @Bean
+    @Override
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
+    }
 
     @Bean
     AuthenticationSuccessHandler authenticationSuccessHandler(){
@@ -48,6 +56,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
 //    验证码过滤器
+    @Bean
     CaptchaFilter captchaFilter(){
         return new CaptchaFilter();
     }
@@ -57,6 +66,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new CustomAuthenticationEntryPoint();
     }
 
+//    自定义username, password过滤器
+    @Bean
+    UsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter(){
+        MyUsernamePasswordAuthenticationFilter myUsernamePasswordAuthenticationFilter = new MyUsernamePasswordAuthenticationFilter();
+
+        myUsernamePasswordAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
+        myUsernamePasswordAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
+        myUsernamePasswordAuthenticationFilter.setFilterProcessesUrl("/user/login");
+        myUsernamePasswordAuthenticationFilter.setUsernameParameter("username");
+        myUsernamePasswordAuthenticationFilter.setUsernameParameter("password");
+        return myUsernamePasswordAuthenticationFilter;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -65,16 +86,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 //        添加jwt过滤器, 添加到usernamePasswordFilter之前
         http.addFilterBefore(captchaFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilter(jwtAuthenticationFilter());
+                .addFilter(jwtAuthenticationFilter())
+                .addFilter(usernamePasswordAuthenticationFilter());
 
         http.authorizeRequests().antMatchers("/user/**").permitAll()
 //                .antMatchers("/transaction/**").permitAll()
                 .anyRequest().authenticated()
 //                登录
-                .and().formLogin().loginProcessingUrl("/user/login")
-//                登录成功，失败处理器
-                .successHandler(authenticationSuccessHandler())
-                .failureHandler(authenticationFailureHandler())
+//                .and().formLogin().loginProcessingUrl("/user/login")
+////                登录成功，失败处理器
+//                .successHandler(authenticationSuccessHandler())
+//                .failureHandler(authenticationFailureHandler())
 //                登出
                 .and().logout().logoutUrl("/user/logout")
 //                登出退回主界面, 路径可更改

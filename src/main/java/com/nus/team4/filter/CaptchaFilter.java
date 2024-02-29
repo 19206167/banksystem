@@ -24,7 +24,6 @@ import java.io.IOException;
 
 
 @Slf4j
-@Component
 public class CaptchaFilter extends OncePerRequestFilter {
 
     @Autowired
