@@ -25,19 +25,21 @@ public class Card {
 
     private String accountType;
 
-    /** 三位安全码 **/
+    /** 三位安全码 -- cvc**/
     private String SecurityCode;
 
     /** 账户余额 **/
     private BigDecimal balance;
 
     /** email **/
+    //encrypted
     private String email;
 
     /** 用户姓名 **/
     private String name;
 
     /** 电话号码 **/
+    //encrypted
     private String phone;
 
     /** 创建时间 */

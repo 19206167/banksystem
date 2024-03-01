@@ -11,6 +11,7 @@ import com.nus.team4.pojo.Card;
 import com.nus.team4.pojo.User;
 import com.nus.team4.service.UserService;
 import com.nus.team4.util.AccountUtil;
+import com.nus.team4.util.EncryptionUtil;
 import com.nus.team4.util.JwtUtil;
 import com.nus.team4.util.RedisUtil;
 import com.nus.team4.vo.JwtToken;
@@ -41,6 +42,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private EncryptionUtil encryptionUtil;
 
     @Autowired
     public UserServiceImpl(UserMapper userMapper, CardMapper cardMapper) {
@@ -109,6 +113,9 @@ public class UserServiceImpl implements UserService {
         }
         if (!card.getSecurityCode().equals(registrationForm.getSecurityCode())) {
             log.info("card security wrong!");
+            log.info("request card cvc:");
+            log.info(registrationForm.getSecurityCode());
+            log.info(card.getSecurityCode());
             throw new BusinessException(ResponseCode.CARD_SECURITY_WRONG.getCode(), "card security wrong!");
         }
 
@@ -120,7 +127,7 @@ public class UserServiceImpl implements UserService {
         }
 
         userMapper.createNewUser(card.getId(),
-                registrationForm.getUsername(), registrationForm.getPassword());
+                registrationForm.getUsername(), encryptionUtil.encrypt(registrationForm.getPassword()));
 
         return Result.success("registration success!");
     }
@@ -142,9 +149,9 @@ public class UserServiceImpl implements UserService {
         String cvc = AccountUtil.generateCVC();
         Card account = Card.builder()
                 .iban(iban)
-                .email(accountOpenForm.getEmail())
+                .email(encryptionUtil.encrypt(accountOpenForm.getEmail()))
                 .name(accountOpenForm.getName())
-                .phone(accountOpenForm.getPhone())
+                .phone(encryptionUtil.encrypt(accountOpenForm.getPhone()))
                 .SecurityCode(cvc)
                 .currency(accountOpenForm.getCurrency())
                 .accountType(accountOpenForm.getAccountType())
