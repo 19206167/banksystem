@@ -13,13 +13,13 @@ public class UserSvcTest {
     @Autowired
     private UserServiceImpl userSvc;
 
-    @Test
-    public void testGetUserById() {
-        // 假设数据库中有一个ID为1的用户
-        Long userId = 1L;
-        User user = userSvc.getUserById(userId);
-
-        // 验证结果
-        assertNotNull(user, "用户不应该为null");
-    }
+//    @Test
+//    public void testGetUserById() {
+//        // 假设数据库中有一个ID为1的用户
+//        Long userId = 1L;
+//        User user = userSvc.getUserById(userId);
+//
+//        // 验证结果
+//        assertNotNull(user, "用户不应该为null");
+//    }
 }

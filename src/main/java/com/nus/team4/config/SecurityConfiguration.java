@@ -28,17 +28,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private MyUserDetailsService userDetailsService;
 
     @Bean
-    AuthenticationSuccessHandler authenticationSuccessHandler(){
+    AuthenticationSuccessHandler authenticationSuccessHandler() {
         return new MyAuthenticationSuccessHandler();
     }
 
     @Bean
-    AuthenticationFailureHandler authenticationFailureHandler(){
+    AuthenticationFailureHandler authenticationFailureHandler() {
         return new MyAuthenticationFailureHandler();
     }
 
     /**
      * jwt过滤器
+     *
      * @return
      * @throws Exception
      */
@@ -47,8 +48,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new JwtAuthenticationFilter(authenticationManager());
     }
 
-//    验证码过滤器
-    CaptchaFilter captchaFilter(){
+    //    验证码过滤器
+    CaptchaFilter captchaFilter() {
         return new CaptchaFilter();
     }
 
@@ -56,7 +57,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     CustomAuthenticationEntryPoint customAuthenticationEntryPoint() {
         return new CustomAuthenticationEntryPoint();
     }
-
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -68,7 +68,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .addFilter(jwtAuthenticationFilter());
 
         http.authorizeRequests().antMatchers("/user/**").permitAll()
-//                .antMatchers("/transaction/**").permitAll()
+  //              .antMatchers("/transaction/**").permitAll()
                 .anyRequest().authenticated()
 //                登录
                 .and().formLogin().loginProcessingUrl("/user/login")
@@ -95,5 +95,5 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }
+
