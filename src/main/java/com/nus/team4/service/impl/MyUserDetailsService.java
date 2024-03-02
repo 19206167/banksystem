@@ -1,6 +1,7 @@
 package com.nus.team4.service.impl;
 
 import com.nus.team4.mapper.UserMapper;
+import com.nus.team4.util.EncryptionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,6 +22,9 @@ public class MyUserDetailsService implements UserDetailsService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private EncryptionUtil encryptionUtil;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
@@ -39,6 +43,6 @@ public class MyUserDetailsService implements UserDetailsService {
                 AuthorityUtils.commaSeparatedStringToAuthorityList("role");
 
         return new User(user.getUsername(),
-                new BCryptPasswordEncoder().encode(user.getPassword()), authorities);
+                new BCryptPasswordEncoder().encode(encryptionUtil.decrypt(user.getPassword())), authorities);
     }
 }

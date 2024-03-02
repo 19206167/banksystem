@@ -23,3 +23,6 @@ server:
     key-store: classpath:testserver.keystore
     key-password: 123456
     key-store-type: JKS
+
+encryption:
+  secretKey: vt3IHkeUwVOTedGTS6XnRmatQSQjYIXd0Rj7hggcV60=
