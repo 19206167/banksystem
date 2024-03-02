@@ -12,6 +12,8 @@ public interface UserService {
 
 //    Result<JwtToken> login(UsernameAndPassword usernameAndPassword) throws Exception;
 
+    Result<String> getIban(String token) throws Exception;
+
     Result logout(String token) throws Exception;
 
     Result register(RegistrationForm registrationForm) throws BusinessException;

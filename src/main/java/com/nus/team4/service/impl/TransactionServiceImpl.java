@@ -10,13 +10,17 @@ import com.nus.team4.pojo.Card;
 import com.nus.team4.pojo.Transaction;
 import com.nus.team4.pojo.User;
 import com.nus.team4.service.TransactionService;
+import com.nus.team4.util.EncryptionUtil;
 import com.nus.team4.vo.TransactionForm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 import com.nus.team4.common.ResponseCode;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -34,6 +38,13 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private EmailServiceImpl emailService;
+
+    @Autowired
+    private EncryptionUtil encryptionUtil;
+
 
     //    转账是事务的，保证一致性
     @Transactional
@@ -77,7 +88,70 @@ public class TransactionServiceImpl implements TransactionService {
                 transactionForm.getReceiverCardNumber(), transactionForm.getAmount(),
                 userMapper.findByCardId(senderCard.getId()).getId());
 
-        return Result.success("转账成功");
+        /* send the notification */
+        String senderEmail = encryptionUtil.decrypt(senderCard.getEmail());
+        String receiverEmail = encryptionUtil.decrypt(receiverCard.getEmail());
+
+        // sender email
+        String senderMessage = String.format(
+                "Dear %s,\n\n" +
+                        "We wish to inform you that a transaction has been made from your bank account. Here are the details:\n\n" +
+                        "- Recipient's Name: %s\n" +
+                        "- Recipient's Account Number (last four digits): %s\n" +
+                        "- Transaction Amount: %s\n" +
+                        "- Transaction Date and Time: %s\n\n" +
+                        "If you believe this was a mistake or an unauthorized transaction, please contact us immediately.\n\n" +
+                        "Thank you,\n" +
+                        "Your Bank's Customer Service Team",
+                senderCard.getName(),
+                receiverCard.getName(),
+                transactionForm.getReceiverCardNumber().substring(transactionForm.getReceiverCardNumber().length() - 4),
+                transactionForm.getAmount().toString(),
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        );
+
+        try {
+            emailService.sendSimpleMessage(
+                    encryptionUtil.decrypt(senderCard.getEmail()),
+                    "Bank Transaction Notification",
+                    senderMessage
+            );
+        } catch (MailException e) {
+            // 日志记录邮件发送失败
+            log.error("Failed to send email to sender: " + e.getMessage());
+        }
+
+        // receiver email
+        String receiverMessage = String.format(
+                "Dear %s,\n\n" +
+                        "We are pleased to inform you that your bank account has received a transfer. Here are the details:\n\n" +
+                        "- Sender's Name: %s\n" +
+                        "- Sender's Account Number (last four digits): %s\n" +
+                        "- Transaction Amount: %s\n" +
+                        "- Transaction Date and Time: %s\n\n" +
+                        "Please log in to your online banking account or contact us for more information.\n\n" +
+                        "Thank you,\n" +
+                        "Your Bank's Customer Service Team",
+                receiverCard.getName(),
+                senderCard.getName(),
+                transactionForm.getSenderCardNumber().substring(transactionForm.getSenderCardNumber().length() - 4),
+                transactionForm.getAmount().toString(),
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        );
+
+        try {
+            emailService.sendSimpleMessage(
+                    encryptionUtil.decrypt(receiverCard.getEmail()),
+                    "Bank Credit Notification",
+                    receiverMessage
+            );
+        } catch (MailException e) {
+            // 日志记录邮件发送失败
+            log.error("Failed to send email to receiver: " + e.getMessage());
+        }
+
+
+        return Result.success("transaction success");
     }
 
     @Override
@@ -101,10 +175,9 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public Result deposit(BalanceDto balanceDto){
         String iban = balanceDto.getIban();
-        BigDecimal amount = balanceDto.getAmount();
-        long userId = balanceDto.getUserId();
-
         Card card = cardMapper.findByCardNumber(iban);
+        BigDecimal amount = balanceDto.getAmount();
+        long userId = userMapper.findByCardId(card.getId()).getId();
 
         if (card == null) {
             log.error("卡号错误");
@@ -115,6 +188,33 @@ public class TransactionServiceImpl implements TransactionService {
         cardMapper.updateCard(card);
         transactionMapper.insertTransactionInfo("111",
                 iban, amount, userId);
+
+        String depositMessage = String.format(
+                "Dear Customer,\n\n" +
+                        "A deposit transaction has been successfully credited to your account. Here are the details:\n\n" +
+                        "- Account IBAN: %s\n" +
+                        "- Deposit Amount: %s\n" +
+                        "- New Balance: %s\n" +
+                        "- Transaction Date and Time: %s\n\n" +
+                        "If you have any questions or did not authorize this transaction, please contact us immediately.\n\n" +
+                        "Thank you,\n" +
+                        "Your Bank's Customer Service Team",
+                iban,
+                amount.toString(),
+                card.getBalance().toString(),
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        );
+
+        try {
+            emailService.sendSimpleMessage(
+                    encryptionUtil.decrypt(card.getEmail()),
+                    "Deposit Notification",
+                    depositMessage
+            );
+        } catch (MailException e) {
+            log.error("Failed to send deposit email notification: " + e.getMessage());
+        }
+
         return Result.success("deposit success");
     }
 
@@ -122,10 +222,9 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public Result withdraw(BalanceDto balanceDto){
         String iban = balanceDto.getIban();
-        BigDecimal amount = balanceDto.getAmount();
-        long userId = balanceDto.getUserId();
-
         Card card = cardMapper.findByCardNumber(iban);
+        BigDecimal amount = balanceDto.getAmount();
+        long userId = userMapper.findByCardId(card.getId()).getId();
 
         if (card == null) {
             log.error("卡号错误");
@@ -142,6 +241,33 @@ public class TransactionServiceImpl implements TransactionService {
 
         transactionMapper.insertTransactionInfo(iban,
                 "222", amount, userId);
+
+        String withdrawalMessage = String.format(
+                "Dear Customer,\n\n" +
+                        "A withdrawal transaction has been successfully completed from your account. Here are the details:\n\n" +
+                        "- Account IBAN: %s\n" +
+                        "- Withdrawal Amount: %s\n" +
+                        "- New Balance: %s\n" +
+                        "- Transaction Date and Time: %s\n\n" +
+                        "If you have any questions or did not authorize this transaction, please contact us immediately.\n\n" +
+                        "Thank you,\n" +
+                        "Your Bank's Customer Service Team",
+                iban,
+                amount.toString(),
+                card.getBalance().toString(),
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        );
+
+        try {
+            emailService.sendSimpleMessage(
+                    encryptionUtil.decrypt(card.getEmail()),
+                    "Withdrawal Notification",
+                    withdrawalMessage
+            );
+        } catch (MailException e) {
+            log.error("Failed to send withdrawal email notification: " + e.getMessage());
+        }
+
         return Result.success("withdraw success");
     }
 

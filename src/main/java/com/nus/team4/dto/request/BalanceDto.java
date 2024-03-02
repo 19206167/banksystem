@@ -15,7 +15,4 @@ public class BalanceDto {
     @NotBlank(message = "amount is required")
     @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
     BigDecimal amount;
-
-    @NotBlank(message = "userId is required")
-    long userId;
 }

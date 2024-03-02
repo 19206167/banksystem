@@ -4,8 +4,10 @@ import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.ShearCaptcha;
 import com.nus.team4.advice.Result;
 import com.nus.team4.exception.BusinessException;
+import com.nus.team4.service.EmailService;
 import com.nus.team4.service.UserService;
 import com.nus.team4.dto.request.AccountOpenForm;
+import com.nus.team4.service.impl.EmailServiceImpl;
 import com.nus.team4.util.RedisUtil;
 import com.nus.team4.vo.JwtToken;
 import com.nus.team4.vo.RegistrationForm;
@@ -36,6 +38,9 @@ public class UserController {
     @Autowired
     private RedisUtil redisUtil;
 
+    @Autowired
+    private EmailServiceImpl emailService;
+
 //    @PostMapping("/login")
 //    public Result<JwtToken> login(@RequestBody UsernameAndPassword usernameAndPassword) throws Exception {
 //        log.info("调用方法： [{}]", "login");
@@ -61,9 +66,25 @@ public class UserController {
         return userService.logout(token.getToken());
     }
 
+    @GetMapping("/getIban")
+    public Result<String> getIban(@RequestBody JwtToken token) throws Exception {
+        log.info("调用方法：[{}]", "getIban");
+        return userService.getIban(token.getToken());
+    }
+
+    @GetMapping("/emailTest")
+    public void emailTest()  {
+        // 发送邮件通知
+        emailService.sendSimpleMessage(
+                "515118458@qq.com",
+                "银行操作通知",
+                "亲爱的用户，您的账户有新的操作，请检查。"
+        );
+    }
+
     /*获取验证码，借助hutool的验证码生成工具类*/
     @GetMapping("/getCaptcha")
-    public Result<Map<String, String>> getCode(HttpServletResponse response) throws IOException {
+    public void getCode(HttpServletResponse response) throws IOException {
         //生成随机码，作为验证码的key值，传给前端（方便验证时，根据key从redis中取出正确的验证码value）
         String key = UUID.randomUUID().toString();
 
@@ -87,17 +108,18 @@ public class UserController {
         //将验证码和对应的随机key值写入缓存数据库
         redisUtil.set(key, code, 600l, TimeUnit.SECONDS);
 
-        Map<String, String> res = new HashMap<>();
-        res.put("key", key);
-        res.put("image", base64Image);
-//        response.setContentType("image/jpeg");
-//        response.setHeader("Pragma", "No-cache");
-//        Map<String, String> map = new HashMap<>();
+        // 在响应头中添加自定义字段"Captcha-Key"来传递验证码的key
+        response.setHeader("Captcha-Key", key);
 
-//        captcha.write(response.getOutputStream());
+        // 设置响应内容类型为图像JPEG
+        response.setContentType("image/jpeg");
 
-//        response.getOutputStream().write("verificationCode", res);
-//        response.getOutputStream().close();
-        return Result.success(res, "验证码");
+        // 禁用缓存
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Cache-Control", "no-store");
+        response.setHeader("Expires", "0");
+
+        // 将验证码图像作为二进制流发送到响应体
+        captcha.write(response.getOutputStream());
     }
 }

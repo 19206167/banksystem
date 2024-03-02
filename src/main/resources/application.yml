@@ -9,6 +9,20 @@ spring:
     port: 6379
     password:
     database: 1
+  mail:
+    host: smtp.163.com
+    port: 465
+    username: 18090664363@163.com
+    password: ZYGCNUGYIOQTJAIN
+    properties:
+      mail:
+        smtp:
+          auth: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            fallback: false
+          starttls:
+            enable: true
 
 mybatis:
   type-aliases-package: com.kl.bankmaster.model
@@ -26,3 +40,7 @@ server:
 
 encryption:
   secretKey: vt3IHkeUwVOTedGTS6XnRmatQSQjYIXd0Rj7hggcV60=
+
+
+
+

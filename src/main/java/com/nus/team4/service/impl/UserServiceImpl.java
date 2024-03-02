@@ -14,21 +14,16 @@ import com.nus.team4.util.AccountUtil;
 import com.nus.team4.util.EncryptionUtil;
 import com.nus.team4.util.JwtUtil;
 import com.nus.team4.util.RedisUtil;
-import com.nus.team4.vo.JwtToken;
-import com.nus.team4.vo.LoginUserInfo;
 import com.nus.team4.vo.RegistrationForm;
-import com.nus.team4.vo.UsernameAndPassword;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.nus.team4.mapper.UserMapper;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 
 import java.math.BigDecimal;
 
 import java.util.Date;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 
@@ -132,6 +127,14 @@ public class UserServiceImpl implements UserService {
         return Result.success("registration success!");
     }
 
+    @Override
+    public Result<String> getIban(String token) throws Exception {
+        String username = JwtUtil.parseUserInfoFromToken(token);
+        User user = userMapper.findByUsername(username);
+        Card card = cardMapper.findByCardID(user.getCardId());
+
+        return Result.success(card.getIban());
+    }
     @Override
     public Result<String> logout(String token) throws Exception {
         String username = JwtUtil.parseUserInfoFromToken(token);

@@ -12,6 +12,9 @@ public interface CardMapper {
     @Select("Select * from t_card where iban = #{iban}")
     Card findByCardNumber(String iban);
 
+    @Select("Select * from t_card where id = #{id}")
+    Card findByCardID(Long id);
+
     // 插入新卡信息
     @Insert("INSERT INTO t_card (iban, SecurityCode, balance, email, name, phone, currency, accounttype, status, create_time, update_time) VALUES (#{iban}, #{SecurityCode}, #{balance}, #{email}, #{name}, #{phone}, #{currency}, #{status}, #{accountType}, #{createTime}, #{updateTime})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
