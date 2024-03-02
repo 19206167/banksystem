@@ -98,6 +98,7 @@ public class UserController {
 
 //        response.getOutputStream().write("verificationCode", res);
 //        response.getOutputStream().close();
+
         return Result.success(res, "验证码");
     }
 }
