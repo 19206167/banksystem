@@ -11,8 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -27,6 +29,12 @@ public class TransactionController {
 //        log.info("调用方法：[{}]", "transaction test");
 //        return "test";
 //    }
+
+    @GetMapping("/getCardNumber")
+    public Result<Map<String, String>> getCardNumber(HttpServletRequest request) throws Exception {
+        return transactionService.getCardNumber(request.getParameter("token"));
+    }
+
 
     @PostMapping("/transfer")
     public Result transfer(@RequestBody TransactionForm transactionForm) throws BusinessException {
