@@ -14,6 +14,8 @@ public interface UserService {
 
     Result<String> getIban(String token) throws Exception;
 
+    Result<String> getName(String token) throws Exception;
+
     Result logout(String token) throws Exception;
 
     Result register(RegistrationForm registrationForm) throws BusinessException;

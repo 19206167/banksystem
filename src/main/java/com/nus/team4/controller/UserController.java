@@ -72,6 +72,12 @@ public class UserController {
         return userService.getIban(token.getToken());
     }
 
+    @GetMapping("/getName")
+    public Result<String> getName(@RequestBody JwtToken token) throws Exception {
+        log.info("调用方法：[{}]", "getName");
+        return userService.getName(token.getToken());
+    }
+
     @GetMapping("/emailTest")
     public void emailTest()  {
         // 发送邮件通知

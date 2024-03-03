@@ -135,6 +135,15 @@ public class UserServiceImpl implements UserService {
 
         return Result.success(card.getIban());
     }
+
+    @Override
+    public Result<String> getName(String token) throws Exception {
+        String username = JwtUtil.parseUserInfoFromToken(token);
+        User user = userMapper.findByUsername(username);
+        Card card = cardMapper.findByCardID(user.getCardId());
+
+        return Result.success(card.getName());
+    }
     @Override
     public Result<String> logout(String token) throws Exception {
         String username = JwtUtil.parseUserInfoFromToken(token);
