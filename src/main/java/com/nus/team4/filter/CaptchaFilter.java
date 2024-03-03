@@ -50,7 +50,10 @@ public class CaptchaFilter extends OncePerRequestFilter {
                 //如果不正确，扑获到验证码异常就交给认证失败处理器
                 if (authenticationFailureHandler == null)
                     authenticationFailureHandler = SpringContextUtil.getBean(AuthenticationFailureHandler.class);
-
+                // 添加日志记录不正确的登录尝试
+                log.error("Incorrect login attempt. Error: " +
+                        exception.getMessage() +
+                        " Request URL: " + url + ", Method: " + httpServletRequest.getMethod());
                 authenticationFailureHandler.onAuthenticationFailure(httpServletRequest,httpServletResponse, exception);
             }
 

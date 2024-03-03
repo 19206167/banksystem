@@ -19,6 +19,9 @@ public class MyAuthenticationFailureHandler extends JSONAuthentication implement
     public void onAuthenticationFailure(HttpServletRequest httpServletRequest,
                                         HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
         //继承封装的输出JSON格式类，并调用父类方法即可
+        // Log the details of the failed authentication attempt
+        log.error("Authentication failure: Remote IP: " + httpServletRequest.getRemoteAddr() + ", Error: " + e.getMessage());
+
         this.WriteJSON(httpServletRequest,httpServletResponse, Result.error(ResponseCode.COMMON_FAIL.getCode(), e.getMessage()));
     }
 }
