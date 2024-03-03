@@ -7,6 +7,7 @@ import com.nus.team4.exception.BusinessException;
 import com.nus.team4.vo.TransactionForm;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 
 public interface TransactionService {
@@ -18,4 +19,5 @@ public interface TransactionService {
 
     Result withdraw(BalanceDto balanceDto);
 
+    Result<Map<String, String>> getCardNumber(String token) throws Exception;
 }

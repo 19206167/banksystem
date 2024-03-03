@@ -10,6 +10,7 @@ import com.nus.team4.pojo.Card;
 import com.nus.team4.pojo.Transaction;
 import com.nus.team4.pojo.User;
 import com.nus.team4.service.TransactionService;
+import com.nus.team4.util.JwtUtil;
 import com.nus.team4.vo.TransactionForm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,10 @@ import org.springframework.stereotype.Service;
 import com.nus.team4.common.ResponseCode;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -145,6 +149,19 @@ public class TransactionServiceImpl implements TransactionService {
         return Result.success("withdraw success");
     }
 
-
+    @Override
+    public Result<Map<String, String>> getCardNumber(String token) throws Exception {
+        if (token == null) {
+            log.error("用户未登录，没有token.");
+            throw new BusinessException(ResponseCode.USER_NOT_LOGIN.getCode(), "用户未登录，没有token.");
+        }
+        String username = JwtUtil.parseUserInfoFromToken(token);
+        User user = userMapper.findByUsername(username);
+        Card card = cardMapper.findByCardId(user.getCardId());
+        Map<String, String> map = new HashMap<>();
+        map.put("name", card.getName());
+        map.put("cardNumber", card.getIban());
+        return Result.success(map, "发送方姓名和卡号信息");
+    }
 }
 
