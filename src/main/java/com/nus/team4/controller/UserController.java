@@ -84,6 +84,7 @@ public class UserController {
 
     /*获取验证码，借助hutool的验证码生成工具类*/
     @GetMapping("/getCaptcha")
+    @CrossOrigin(origins = "http://localhost:5173")
     public void getCode(HttpServletResponse response) throws IOException {
         //生成随机码，作为验证码的key值，传给前端（方便验证时，根据key从redis中取出正确的验证码value）
         String key = UUID.randomUUID().toString();
