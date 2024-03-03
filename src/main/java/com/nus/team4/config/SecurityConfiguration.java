@@ -21,6 +21,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @EnableWebSecurity
 @Configuration
@@ -34,7 +39,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected AuthenticationManager authenticationManager() throws Exception {
         return super.authenticationManager();
     }
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // 允许来自前端服务器的域名
+        configuration.setAllowedMethods(Arrays.asList("GET","POST","HEAD","OPTIONS","PUT","PATCH","DELETE"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        configuration.setAllowCredentials(true); // 如果需要的话允许凭证
 
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // 应用于所有的路径
+        return source;
+    }
     @Bean
     AuthenticationSuccessHandler authenticationSuccessHandler(){
         return new MyAuthenticationSuccessHandler();
@@ -81,31 +97,25 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        首页所有人可以访问，功能页需要登录之后才能访问
-//        链式编程
-
-//        添加jwt过滤器, 添加到usernamePasswordFilter之前
-        http.addFilterBefore(captchaFilter(), UsernamePasswordAuthenticationFilter.class)
+        http
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
+                .addFilterBefore(captchaFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilter(jwtAuthenticationFilter())
-                .addFilter(usernamePasswordAuthenticationFilter());
-
-        http.authorizeRequests().antMatchers("/user/**").permitAll()
-//                .antMatchers("/transaction/**").permitAll()
+                .addFilter(usernamePasswordAuthenticationFilter())
+                .authorizeRequests()
+                .antMatchers("/user/**").permitAll()
                 .anyRequest().authenticated()
-//                登录
-//                .and().formLogin().loginProcessingUrl("/user/login")
-////                登录成功，失败处理器
-//                .successHandler(authenticationSuccessHandler())
-//                .failureHandler(authenticationFailureHandler())
-//                登出
-                .and().logout().logoutUrl("/user/logout")
-//                登出退回主界面, 路径可更改
+                .and()
+                .logout()
+                .logoutUrl("/user/logout")
                 .logoutSuccessUrl("/")
                 .deleteCookies("JSESSIONID")
-                .and().exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPoint());
-
-        //关闭CSRF跨域
-        http.csrf().disable();
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(customAuthenticationEntryPoint())
+                .and()
+                .csrf().disable();
     }
 
     @Override
