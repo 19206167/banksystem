@@ -13,6 +13,7 @@ import com.nus.team4.service.TransactionService;
 import com.nus.team4.util.EncryptionUtil;
 import com.nus.team4.util.JwtUtil;
 import com.nus.team4.vo.TransactionForm;
+import com.nus.team4.vo.TransactionHistoryForm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
@@ -94,7 +95,8 @@ public class TransactionServiceImpl implements TransactionService {
         /* send the notification */
         String senderEmail = encryptionUtil.decrypt(senderCard.getEmail());
         String receiverEmail = encryptionUtil.decrypt(receiverCard.getEmail());
-
+        log.info(senderEmail);
+        log.info(receiverEmail);
         // sender email
         String senderMessage = String.format(
                 "Dear %s,\n\n" +
@@ -110,7 +112,7 @@ public class TransactionServiceImpl implements TransactionService {
                 receiverCard.getName(),
                 transactionForm.getReceiverCardNumber().substring(transactionForm.getReceiverCardNumber().length() - 4),
                 transactionForm.getAmount().toString(),
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))
         );
 
         try {
@@ -139,7 +141,7 @@ public class TransactionServiceImpl implements TransactionService {
                 senderCard.getName(),
                 transactionForm.getSenderCardNumber().substring(transactionForm.getSenderCardNumber().length() - 4),
                 transactionForm.getAmount().toString(),
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))
         );
 
         try {
@@ -158,16 +160,21 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Result getTransactionHistory(String username, int pageNow, int pageSize) {
+    public Result getTransactionHistory(TransactionHistoryForm transactionHistoryForm) {
+
+        String username = transactionHistoryForm.getUsername();
+        int pageNow = transactionHistoryForm.getPageNum();
+        int pageSize = transactionHistoryForm.getPageSize();
         log.info(username);
 
-        User user = userMapper.findByUsername("lzj");
+        User user = userMapper.findByUsername(username);
 
         log.info("transaction history user: [{}]", user);
 
         PageHelper.startPage(pageNow, pageSize);
 
-        List<Transaction> transactions = transactionMapper.selectTransactionByPage(user.getId());
+        List<Transaction> transactions = transactionMapper.selectTransactionsByUserAndDates(user.getId(),
+                transactionHistoryForm.getStartTime(), transactionHistoryForm.getEndTime());
 
         log.info("transactions: [{}]", transactions);
 
@@ -258,7 +265,7 @@ public class TransactionServiceImpl implements TransactionService {
                 iban,
                 amount.toString(),
                 card.getBalance().toString(),
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))
         );
 
         try {

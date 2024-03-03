@@ -43,8 +43,7 @@ public class TransactionController {
 
     @GetMapping("history")
     public Result<List<Transaction>> history(@RequestBody TransactionHistoryForm transactionHistoryForm) {
-        return transactionService.getTransactionHistory(transactionHistoryForm.getUsername(),
-                transactionHistoryForm.getPageNum(), transactionHistoryForm.getPageSize());
+        return transactionService.getTransactionHistory(transactionHistoryForm);
     }
 
     @PostMapping("/deposit")

@@ -5,8 +5,10 @@ import com.nus.team4.pojo.Transaction;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Mapper
@@ -17,4 +19,13 @@ public interface TransactionMapper {
 
     @Select("Select * from t_transaction where user_id = #{userId}")
     List<Transaction> selectTransactionByPage(Long userId);
+
+    @Select("SELECT * FROM t_transaction " +
+            "WHERE user_id = #{userId} " +
+            "AND created_time BETWEEN #{startTime} AND #{endTime} " +
+            "AND deleted = false")
+    List<Transaction> selectTransactionsByUserAndDates(
+            @Param("userId") Long userId,
+            @Param("startTime") Date startTime,
+            @Param("endTime") Date endTime);
 }

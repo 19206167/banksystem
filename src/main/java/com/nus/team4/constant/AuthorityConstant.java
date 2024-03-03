@@ -37,7 +37,7 @@ public class AuthorityConstant {
             "Pp6ciqvdswIgw/oGjcs2WA=";
 
 //    默认的JWT token超时时间
-    public final static Integer DEFAULT_EXPIRE_MINUTE = 10;
+    public final static Integer DEFAULT_EXPIRE_MINUTE = 30;
 
     //    RSA公钥
     public final static String PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCA" +
