@@ -282,7 +282,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
         String username = JwtUtil.parseUserInfoFromToken(token);
         User user = userMapper.findByUsername(username);
-        Card card = cardMapper.findByCardId(user.getCardId());
+        Card card = cardMapper.findByCardID(user.getCardId());
         Map<String, String> map = new HashMap<>();
         map.put("name", card.getName());
         map.put("cardNumber", card.getIban());

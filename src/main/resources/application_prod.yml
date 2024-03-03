@@ -1,0 +1,42 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://bank-post.cza28kas6dwv.ap-southeast-1.rds.amazonaws.com:5432/postgres
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  redis:
+    host: localhost
+    port: 6379
+    password: ${REDIS_PASSWORD}
+    database: 1
+  mail:
+    host: smtp.163.com
+    port: 465
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            fallback: false
+          starttls:
+            enable: true
+
+mybatis:
+  type-aliases-package: com.kl.bankmaster.model
+  configuration:
+    map-underscore-to-camel-case: true
+
+server:
+  port: 8080
+  httpPort: 8081
+  ssl:
+    protocol: TLS
+    key-store: classpath:testserver.keystore
+    key-password: ${KEYSTORE_PASSWORD}
+    key-store-type: JKS
+
+encryption:
+  secretKey: ${ENCRYPTION_SECRET_KEY}
