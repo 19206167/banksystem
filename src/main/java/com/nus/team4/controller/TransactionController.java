@@ -1,6 +1,7 @@
 package com.nus.team4.controller;
 
 import com.nus.team4.advice.Result;
+import com.nus.team4.annotation.InterfaceLimit;
 import com.nus.team4.dto.request.BalanceDto;
 import com.nus.team4.exception.BusinessException;
 import com.nus.team4.pojo.Transaction;
@@ -18,34 +19,32 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/transaction")
+@RequestMapping({"/transaction", "/apis/transaction"})
 public class TransactionController {
 
     @Autowired
     private TransactionService transactionService;
 
-//    @GetMapping("/test")
-//    public String test() {
-//        log.info("调用方法：[{}]", "transaction test");
-//        return "test";
-//    }
-
+    @InterfaceLimit
     @GetMapping("/getCardNumber")
     public Result<Map<String, String>> getCardNumber(HttpServletRequest request) throws Exception {
         return transactionService.getCardNumber(request.getParameter("token"));
     }
 
 
+    @InterfaceLimit
     @PostMapping("/transfer")
     public Result transfer(@RequestBody TransactionForm transactionForm) throws BusinessException {
         return transactionService.transaction(transactionForm);
     }
 
+    @InterfaceLimit
     @GetMapping("history")
     public Result<List<Transaction>> history(@RequestBody TransactionHistoryForm transactionHistoryForm) {
         return transactionService.getTransactionHistory(transactionHistoryForm);
     }
 
+    @InterfaceLimit
     @PostMapping("/deposit")
     public Result<String> deposit(@Valid @RequestBody BalanceDto balanceDto) {
         log.info("调用方法： [{}]", "deposit");
@@ -53,6 +52,7 @@ public class TransactionController {
         return Result.success("deposit");
     }
 
+    @InterfaceLimit
     @PostMapping("/withdraw")
     public Result<String> withdraw(@RequestBody BalanceDto balanceDto) {
         log.info("调用方法： [{}]", "withdraw");

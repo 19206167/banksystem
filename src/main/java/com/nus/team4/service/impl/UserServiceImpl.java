@@ -138,7 +138,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result<String> getName(String token) throws Exception {
+
         String username = JwtUtil.parseUserInfoFromToken(token);
+        log.info(username);
+
         User user = userMapper.findByUsername(username);
         Card card = cardMapper.findByCardID(user.getCardId());
 

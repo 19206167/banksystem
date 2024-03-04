@@ -104,6 +104,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .addFilter(jwtAuthenticationFilter())
                 .addFilter(usernamePasswordAuthenticationFilter())
                 .authorizeRequests()
+                .antMatchers("/apis/user/**").permitAll()
                 .antMatchers("/user/**").permitAll()
                 //.antMatchers("/transaction/**").permitAll()
                 .anyRequest().authenticated()
