@@ -15,7 +15,6 @@ import com.nus.team4.vo.RegistrationForm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import sun.misc.BASE64Encoder;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +22,7 @@ import javax.validation.Valid;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -114,12 +114,11 @@ public class UserController {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "jpg", outputStream);
         //进行base64编码
-        BASE64Encoder base64Encoder = new BASE64Encoder();
         //编码前缀
         String str = "data:image/jpeg;base64,";
         //使用hutool自己提供的方法，直接获取base64编码
 //        String base64 = str + captcha.getImageBase64();
-        String base64Image = str + base64Encoder.encode(outputStream.toByteArray());
+        String base64Image = str + Base64.getEncoder().encodeToString(outputStream.toByteArray());
         //将验证码和对应的随机key值写入缓存数据库
         redisUtil.set(key, code, 600l, TimeUnit.SECONDS);
 
