@@ -3,6 +3,7 @@ package com.nus.team4.controller;
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.ShearCaptcha;
 import com.nus.team4.advice.Result;
+import com.nus.team4.annotation.InterfaceLimit;
 import com.nus.team4.exception.BusinessException;
 import com.nus.team4.service.EmailService;
 import com.nus.team4.service.UserService;
@@ -47,12 +48,14 @@ public class UserController {
 //        return userService.login(usernameAndPassword);
 //    }
 
+    @InterfaceLimit
     @PostMapping("/openAccount")
     public Result openAccount(@Valid @RequestBody AccountOpenForm accountOpenForm) throws Exception {
         log.info("调用方法： [{}]", "openAccount");
         return userService.openAccount(accountOpenForm);
     }
 
+    @InterfaceLimit
     @PostMapping("/register")
     public Result<String> register(@RequestBody RegistrationForm registrationForm) throws BusinessException {
         log.info("调用方法： [{}]", "register");
@@ -66,18 +69,21 @@ public class UserController {
         return userService.logout(token.getToken());
     }
 
+    @InterfaceLimit
     @GetMapping("/getIban")
     public Result<String> getIban(@RequestBody JwtToken token) throws Exception {
         log.info("调用方法：[{}]", "getIban");
         return userService.getIban(token.getToken());
     }
 
+    @InterfaceLimit
     @GetMapping("/getName")
     public Result<String> getName(@RequestBody JwtToken token) throws Exception {
         log.info("调用方法：[{}]", "getName");
         return userService.getName(token.getToken());
     }
 
+    @InterfaceLimit
     @GetMapping("/emailTest")
     public void emailTest()  {
         // 发送邮件通知
@@ -89,6 +95,8 @@ public class UserController {
     }
 
     /*获取验证码，借助hutool的验证码生成工具类*/
+//    使用次數限制
+    @InterfaceLimit
     @GetMapping("/getCaptcha")
     @CrossOrigin(origins = "http://localhost:5173")
     public void getCode(HttpServletResponse response) throws IOException {

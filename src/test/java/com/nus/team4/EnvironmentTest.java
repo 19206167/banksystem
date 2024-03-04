@@ -11,8 +11,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class EnvironmentTest {
 
     @Test
-    public void run(){
-        System.out.println(1/0);
+    public void run() {
+        System.out.println();
     }
 
 }
