@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.nus.team4.constant.AuthorityConstant;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
-import sun.misc.BASE64Decoder;
 
 import java.security.KeyFactory;
 import java.security.PrivateKey;
@@ -12,6 +11,7 @@ import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.time.*;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -90,7 +90,7 @@ public class JwtUtil {
 //    使用方法查询相关文档
     private static PrivateKey getPrivateKey() throws Exception{
         PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(
-                new BASE64Decoder().decodeBuffer(AuthorityConstant.PRIVATE_KEY)
+                Base64.getDecoder().decode(AuthorityConstant.PRIVATE_KEY)
         );
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         return keyFactory.generatePrivate(pkcs8EncodedKeySpec);
@@ -99,7 +99,7 @@ public class JwtUtil {
     //    根据本地存储的公钥，获取到public key对象
     private static PublicKey getPublicKey() throws Exception {
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(
-                new BASE64Decoder().decodeBuffer(AuthorityConstant.PUBLIC_KEY)
+                Base64.getDecoder().decode(AuthorityConstant.PUBLIC_KEY)
         );
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         return keyFactory.generatePublic(keySpec);
