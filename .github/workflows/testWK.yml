@@ -35,4 +35,4 @@ jobs:
           echo Add other actions to build,
           echo test, and deploy your project.
       - name: executing
-        run: cat EnvironmentTest.java
+        run: cat src/test/java/com/nus/team4/EnvironmentTest.java
