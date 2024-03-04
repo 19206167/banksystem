@@ -89,7 +89,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         myUsernamePasswordAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
         myUsernamePasswordAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
-        myUsernamePasswordAuthenticationFilter.setFilterProcessesUrl("/user/login");
+        myUsernamePasswordAuthenticationFilter.setFilterProcessesUrl("/**/user/login");
         myUsernamePasswordAuthenticationFilter.setUsernameParameter("username");
         myUsernamePasswordAuthenticationFilter.setUsernameParameter("password");
         return myUsernamePasswordAuthenticationFilter;
