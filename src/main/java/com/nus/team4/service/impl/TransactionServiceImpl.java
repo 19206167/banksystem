@@ -165,6 +165,7 @@ public class TransactionServiceImpl implements TransactionService {
         String username = transactionHistoryForm.getUsername();
         int pageNow = transactionHistoryForm.getPageNum();
         int pageSize = transactionHistoryForm.getPageSize();
+
         log.info(username);
 
         User user = userMapper.findByUsername(username);

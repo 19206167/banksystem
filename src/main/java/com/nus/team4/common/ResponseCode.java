@@ -13,6 +13,8 @@ public enum ResponseCode {
     PARAM_TYPE_ERROR(1003, "参数类型错误"),
     PARAM_NOT_COMPLETE(1004, "参数缺失"),
 
+    ACCESS_Restriction(1005, "訪問次數達到上限"),
+
     /* 用户错误 */
     USER_NOT_LOGIN(2001, "用户未登录"),
     USER_ACCOUNT_EXPIRED(2002, "账号已过期"),
