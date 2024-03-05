@@ -35,12 +35,16 @@
         </plugins>
     </build>
 
-
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
 
+         <properties>
+  <sonar.organization>secgroup</sonar.organization>
+  <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+</properties>
+         
     <!--    parent project-->
     <parent>
         <artifactId>spring-boot-starter-parent</artifactId>
