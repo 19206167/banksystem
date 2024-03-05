@@ -39,7 +39,7 @@ public class TransactionController {
     }
 
     @InterfaceLimit
-    @GetMapping("history")
+    @GetMapping("/history")
     public Result<List<Transaction>> history(@RequestBody TransactionHistoryForm transactionHistoryForm) {
         return transactionService.getTransactionHistory(transactionHistoryForm);
     }
